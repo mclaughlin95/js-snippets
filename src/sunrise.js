@@ -3,7 +3,7 @@
 
 // Return is in UTC Time!!!
 // Function Pulled straight from make_global_qtdeg_sunrise_sunset_grids.c and converted to JavaScript
-function calculateSunrise(yyyymmdd, lon, lat) {
+export function calculateSunrise(yyyymmdd, lon, lat) {
     
     var zenith = 90.88;
 

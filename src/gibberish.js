@@ -20,22 +20,22 @@
  * @throws { String } will throw an error if text parameter is not a string
  * @returns { String } will return a gibberish translated string
  */
- function gibberish(text) {
-	var generalError = 'gibberish() Error: ';
+export function gibberish(text) {
+	let generalError = 'gibberish() Error: ';
 	if (typeof text != 'string') {
 		throw generalError + 'Invalid \'text\' parameter';
 	}
-	var response = '';
-	for (var i = 0; i < text.length; i++) {
+	let response = '';
+	for (let i = 0; i < text.length; i++) {
 		if (text[i] == '%' && text[i + 1] == 's') {
 			response += '%s';
 			i++;
 			continue;
 		}
 		if (text[i] != ' ') {
-			var characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
-			var randomNumber = Math.floor(Math.random() * characters.length);
-			character = characters.substring(randomNumber, randomNumber + 1);
+			let characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+			let randomNumber = Math.floor(Math.random() * characters.length);
+			let character = characters.substring(randomNumber, randomNumber + 1);
 			response += character;
 		} else {
 			response += ' ';
