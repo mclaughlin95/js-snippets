@@ -220,3 +220,16 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
 
     return { "rise": srise, "set": sset, "hours": shours, "date": yyyymmdd };
 }
+
+export function convertHour(decimalHour) {
+    let hour = Math.floor(parseFloat(decimalHour));
+    let min = Math.floor((parseFloat(decimalHour) - hour)*60);
+    
+    if (hour < 10) {
+        hour = "0"+hour;
+    }
+    if (min < 10) {
+        min = "0"+min;
+    }
+    return hour+":"+min;
+}
