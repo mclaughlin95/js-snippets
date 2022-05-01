@@ -1,11 +1,135 @@
 // https://www.edwilliams.org/sunrise_sunset_algorithm.htm
 
+let sunrise = (() => {
+
+    /**
+     * Will determine whether the year is valid.
+     * 
+     * Valid Years: A whole number ranging from 1 to 9999
+     * 
+     * Type: Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @returns {Boolean}
+     */
+    function isValidYear(year) {
+        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the month is valid
+     * 
+     * Valid Months: A whole number ranging from 1 to 12
+     * 
+     * Type: Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} month a one or two digit number representing a month
+     * @returns 
+     */
+    function isValidMonth(month) {
+        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the day is valid
+     * 
+     * Valid Days: A whole number ranging from 1 to 31
+     * 
+     * Type: Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} day a one or two digit number representing the day 
+     * @returns 
+     */
+    function isValidDay(day) {
+        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the year is a leap year
+     * 
+     * Type: Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @throws Will throw an error if year is not valid. See isValidYear() for more information
+     * @returns {Boolean}
+     */
+    function isLeapYear(year) {
+        if (!this.isValidYear(year)) {
+            throw 'Invalid year';
+        }
+        if (year % 4 == 0) {
+            if (year % 100 == 0) {
+                if (year % 400 == 0) {
+                    return true
+                } else {
+                    return false;
+                }
+            } else {
+                return true;
+            }
+        } else {
+            return false;
+        }
+    }
+
+    /**
+     * Will parse a date for the use of calculating sunrise and sunset values. 
+     * 
+     * Type: Function
+     */
+    function validateDate(year, month, day) {
+        if (!this.isValidYear(year)) {
+            throw 'Invalid year';
+        }
+        if (!this.isValidMonth(month)) {
+            throw 'Invalid month';
+        }
+        if (!this.isValidDay(day)) {
+            throw 'Invalid day';
+        }
+    }   
+
+    return {
+        isValidYear: isValidYear,
+        isValidMonth: isValidMonth,
+        isValidDay: isValidDay,
+        isLeapYear: isLeapYear,
+        validateDate: validateDate
+    };
+
+})();
+
+export default sunrise;
+
+
+
+
 
 // Return is in UTC Time!!!
 // Function Pulled straight from make_global_qtdeg_sunrise_sunset_grids.c and converted to JavaScript
-export function calculateSunrise(yyyymmdd, lon, lat) {
+function calculateSunrise(yyyymmdd, lon, lat) {
     
     var zenith = 90.88;
+
+
+    /////////////////////////////////////////////////////////////////////// calculate day of the year
 
     // Convert String to numbers
     var date = parseInt(yyyymmdd);
@@ -29,16 +153,34 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
     var n3 = (1 + Math.floor((year - 4.0 * Math.floor(year / 4.0) + 2.0) / 3.0));
     var n = n1 - (n2 * n3) + day - 30;
 
+
+    console.log('Day Of Year');
+    console.log(n)
+
+
+
+
+
+    /////////////////////////////////////////////////////////////////////// not sure yet
     // Convert the longitude to hour value and calculate an approximate time
     var lnghour = lon / 15.0;
+
+
+
+
+
+
+
+
+
+
+    /////////////////////////////////////////////////////////////////////// sunrise
+
+    /////////////// Sunrise calculations //////////////////
 
     // if rising time is desired:
     var trising = n + ((6.0 - lnghour) / 24.0);
 
-    // if setting time is desired:
-    var tsetting = n + ((18.0 - lnghour) / 24.0);
-
-    /////////////// Sunrise calculations //////////////////
     var t = trising;
 
     // Calculate the Sun's mean anomaly
@@ -97,37 +239,17 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
 
     trising = ut;
 
-    // $tsetting = $ut;
+ 
 
-    // if( is_nan( $trising ) || is_nan( $tsetting ) ){
-    // if( $lat > 0.0 ){
-    // if( ( $mmdd > 321 ) && ( $mmdd <= 921 ) ){
-    // $trising = 0.0;
-    // $tsetting = 24.0;
-    // } else {
-    // $trising = 0.0;
-    // $tsetting = 0.0;
-    // }
-    // } else {
-    // if( ( mmdd > 321 ) && ( mmdd <= 921 ) ){
-    // $trising = 0.0;
-    // $tsetting = 0.0;
-    // } else {
-    // $trising = 0.0;
-    // $tsetting = 24.0;
-    // }
-    // }
-    // }
 
-    // I was told these lines of code are for grids, which is not what we need - Corey McLaughlin
-    // *srise=(float)trising;
-    // *sset=(float)tsetting;
-    // *shours=(float)(tsetting-trising);
-    // while(*shours < 0.0)
-    // *shours+=24.0;
-    // while(*shours > 24.0)
-    // *shours-=24.0;
-    // }
+
+    /////////////////////////////////////////////////////////////////////// sunset
+
+    /////////////// Sunset calculations //////////////////
+
+
+    // if setting time is desired:
+    var tsetting = n + ((18.0 - lnghour) / 24.0);
 
     t = tsetting;
 
@@ -177,6 +299,15 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
     // Calculate local mean time of rising/setting
     t = h + ra - (0.06571 * t) - 6.622;
 
+
+
+
+
+
+
+
+    /////////////////////////////////////////////////////////////////////// UTC conversion
+
     // Adjust back to UTC
     ut = t - lnghour;
     while (ut < 0.0) {
@@ -188,7 +319,7 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
 
     tsetting = ut;
 
-    if (isNaN(trising) || isNaN(tsetting)) {
+    if (isNaN(trising) || isNaN(tsetting)) {   // not sure what the logic might be. Outliers?
         if (lat > 0.0) {
             if ((mmdd > 321) && (mmdd <= 921)) {
                 trising = 0.0;
@@ -221,7 +352,7 @@ export function calculateSunrise(yyyymmdd, lon, lat) {
     return { "rise": srise, "set": sset, "hours": shours, "date": yyyymmdd };
 }
 
-export function convertHour(decimalHour) {
+function convertHour(decimalHour) {
     let hour = Math.floor(parseFloat(decimalHour));
     let min = Math.floor((parseFloat(decimalHour) - hour)*60);
     
