@@ -243,4 +243,42 @@ describe('sunrise()', () => {
 
     });
 
+    describe('isValidLon()', () => {
+
+        it('Undefined lon parameter', () => {
+            expect(sunrise.isValidLon()).toBeFalse();
+            expect(sunrise.isValidLon(undefined)).toBeFalse();
+        });
+
+        it('Invalid negative lon', () => {
+            expect(sunrise.isValidLon(-181)).toBeFalse();
+            expect(sunrise.isValidLon(-180)).toBeTrue();
+        });
+
+        it('Invalid positive lon', () => {
+            expect(sunrise.isValidLon(181)).toBeFalse();
+            expect(sunrise.isValidLon(180)).toBeTrue();
+        });
+
+    });
+
+    describe('isValidLat()', () => {
+
+        it('Undefined lat parameter', () => {
+            expect(sunrise.isValidLat()).toBeFalse();
+            expect(sunrise.isValidLat(undefined)).toBeFalse();
+        });
+
+        it('Invalid negative lat', () => {
+            expect(sunrise.isValidLat(-91)).toBeFalse();
+            expect(sunrise.isValidLat(-90)).toBeTrue();
+        });
+
+        it('Invalid postive lat', () => {
+            expect(sunrise.isValidLat(91)).toBeFalse();
+            expect(sunrise.isValidLat(90)).toBeTrue();
+        });
+
+    });
+
 });

@@ -182,6 +182,50 @@ let sunrise = (() => {
     }
 
     /**
+     * Will determine whether the latitude is valid
+     * 
+     * EPSG:4326
+     * Valid Latitude: -90 to 90
+     * 
+     * Resource: https://epsg.io/4326
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} lat the latitude coordinate 
+     * @returns {Boolean}
+     */
+    function isValidLat(lat) {
+        if (typeof lat == 'number' && lat >= -90 && lat <= 90) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the longitude is valid
+     * 
+     * EPSG:4326
+     * Valid Longitudes: -180 to 180
+     * 
+     * Resource: https://epsg.io/4326
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} lon the longitude cordinate 
+     * @returns {Boolean}
+     */
+    function isValidLon(lon) {
+        if (typeof lon == 'number' && lon >= -180 && lon <= 180) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
      * Will determine whether the month is valid
      * 
      * Valid Months: A whole number ranging from 1 to 12
@@ -225,6 +269,8 @@ let sunrise = (() => {
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,
         isValidDay: isValidDay,
+        isValidLat: isValidLat,
+        isValidLon: isValidLon,
         isValidMonth: isValidMonth,
         isValidYear: isValidYear
     };
