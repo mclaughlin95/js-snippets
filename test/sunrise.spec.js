@@ -215,6 +215,48 @@ describe('sunrise()', () => {
 
     });
 
+    describe('formatDate()', () => {
 
+        let year = 2022;
+        let month = 10;
+        let day = 10;
+
+        it('Invalid date', () => {
+            try {
+                sunrise.formatDate(202.2, 5, 1);
+                throw 'Allowed an invalid year';
+            } catch (err) {
+                expect(err).toEqual('Invalid date');
+            }
+        });
+        
+        it('Returns date string', () => {
+            let response = sunrise.formatDate(year, month, day);
+            let expected = String(year) + String(month) + String(day);
+            expect(response).toEqual(expected);
+        });
+
+        it('Year is four digits', () => {
+            let year = 1;
+            let response = sunrise.formatDate(year, month, day);
+            let expected = '000' + String(year) + String(month) + String(day);
+            expect(response).toEqual(expected);
+        });
+
+        it('Month is two digits', () => {
+            let month = 1;
+            let response = sunrise.formatDate(year, month, day);
+            let expected = String(year) + '0' + String(month) + String(day);
+            expect(response).toEqual(expected);
+        });
+
+        it('Day is two digits', () => {
+            let day = 1;
+            let response = sunrise.formatDate(year, month, day);
+            let expected = String(year) + String(month) + '0' + String(day);
+            expect(response).toEqual(expected);
+        });
+
+    });
 
 });

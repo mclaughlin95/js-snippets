@@ -28,6 +28,38 @@ let sunrise = (() => {
     };
 
     /**
+     * Will transform a date into a formatted string YYYYMMDD
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {*} year a four digit number representing the year
+     * @param {*} month a one or two digit number representing a month
+     * @param {*} day a one or two digit number representing the day
+     * @throws Will throw an error if the date is invalid
+     * @returns {String} the date with a format of YYYYMMDD
+     */
+    function formatDate(year, month, day) {
+        if (!this.isValidDate(year, month, day)) {
+            throw 'Invalid date';
+        }
+        let stringYear = String(year);
+        let stringMonth = String(month);
+        let stringDay = String(day);
+        for (let i = stringYear.length; i < 4; i++) {
+            stringYear = '0' + stringYear;
+        }
+        if (stringMonth.length < 2) {
+            stringMonth = '0' + stringMonth;
+        }
+        if (stringDay.length < 2) {
+            stringDay = '0' + stringDay;
+        }
+        return stringYear + stringMonth + stringDay;
+    }
+
+    /**
      * Will return the number of days in a particular month while accounting for leap year
      * 
      * Type: Public Function
@@ -163,6 +195,7 @@ let sunrise = (() => {
     }
 
     return {
+        formatDate: formatDate,
         getMonthDays: getMonthDays,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,
