@@ -81,6 +81,27 @@ let sunrise = (() => {
     }
 
     /**
+     * Will determine the UTC offset from longitude coordinates
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * Resource: https://www.timeanddate.com/time/current-number-time-zones.html
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} lon the longitude coordinate 
+     * @throws {String} will throw an error if supplied an invalid lon parameter
+     * @returns {Number} the hour value of the longitude coordinate
+     */
+     function getLonUTCOffset(lon) {
+        if (!this.isValidLon(lon)) {
+            throw 'Invalid lon';
+        }
+        return lon / 15;
+    }
+
+    /**
      * Will return the number of days in a particular month while accounting for leap year
      * 
      * Type: Public Function
@@ -106,6 +127,52 @@ let sunrise = (() => {
             return monthDays[2] + 1;
         }
         return monthDays[month];
+    }
+
+    /**
+     * Will determine the rising local time for a given location and day
+     * 
+     * Step Two of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * @param {Number} lon the longitude coordinate
+     * @param {Number} dayOfYear the day of the year
+     * @throws {String} will throw an error if dayOfYear is invalid
+     * @returns {Number} the local rising time
+     */
+    function getRisingTime(lon, dayOfYear) {
+        let utcOffset = this.getLonUTCOffset(lon);
+        if (!this.isValidDayOfYear(dayOfYear)) {
+            throw 'Invalid dayOfYear';
+        }
+        return dayOfYear + ((6 - utcOffset) / 24);
+    }
+
+    /**
+     * Will determine the setting local time for a given location and day
+     * 
+     * Step Two of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * @param {Number} lon the longitude coordinate
+     * @param {Number} dayOfYear the day of the year
+     * @throws {String} will throw an error if dayOfYear is invalid
+     * @returns {Number} the local setting time
+     */
+    function getSettingTime(lon, dayOfYear) {
+        let utcOffset = this.getLonUTCOffset(lon);
+        if (!this.isValidDayOfYear(dayOfYear)) {
+            throw 'Invalid dayOfYear';
+        }
+        return dayOfYear + ((18 - utcOffset) / 24);
     }
 
     /**
@@ -176,6 +243,25 @@ let sunrise = (() => {
      */
      function isValidDay(day) {
         if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the day of the year is valid
+     * 
+     * Valid Days: A whole number ranging from 1 to 366, which includes leap year
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} day the day of the year 
+     * @returns {Boolean}
+     */
+    function isValidDayOfYear(day) {
+        if (typeof day == 'number' && day > 0 && day < 367) {
             return true;
         }
         return false;
@@ -265,10 +351,14 @@ let sunrise = (() => {
 
     return {
         getDayOfYear: getDayOfYear,
+        getLonUTCOffset: getLonUTCOffset,
         getMonthDays: getMonthDays,
+        getRisingTime: getRisingTime,
+        getSettingTime: getSettingTime,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,
         isValidDay: isValidDay,
+        isValidDayOfYear: isValidDayOfYear,
         isValidLat: isValidLat,
         isValidLon: isValidLon,
         isValidMonth: isValidMonth,

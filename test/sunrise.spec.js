@@ -281,4 +281,106 @@ describe('sunrise()', () => {
 
     });
 
+    describe('getLonUTCOffset', () => {
+
+        it('Invalid lon parameter', () => {
+            try {
+                sunrise.getLonUTCOffset(-800);
+                throw 'Allowed invalid lon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lon');
+            }
+        });
+
+        it('Returns expected lon hour', () => {
+            let lon = -78;
+            let expected = lon / 15;
+            let response = sunrise.getLonUTCOffset(lon);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('isValidDayOfYear()', () => {
+
+        it('Undefined day parameter', () => {
+            expect(sunrise.isValidDayOfYear()).toBeFalse();
+            expect(sunrise.isValidDayOfYear(undefined)).toBeFalse();
+        });
+
+        it('Day must be greater than 0', () => {
+            expect(sunrise.isValidDayOfYear(0)).toBeFalse();
+            expect(sunrise.isValidDayOfYear(1)).toBeTrue();
+        });
+
+        it('Day must be less than 366 (including leap year)', () => {
+            expect(sunrise.isValidDayOfYear(367)).toBeFalse();
+            expect(sunrise.isValidDayOfYear(366)).toBeTrue();
+        });
+
+    });
+
+
+    describe('getRisingTime()', () => {
+
+        it('Invalid lon parameter', () => {
+            try {
+                sunrise.getRisingTime('foobar');
+                throw 'Allowed an invalid lon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lon');
+            }
+        });
+
+        it('Invalid dayOfYear parameter', () => {
+            try {
+                sunrise.getRisingTime(-78, 'foobar');
+                throw 'Allowed an invalid dayOfYear parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid dayOfYear');
+            }
+        });
+        
+        it('Checking Rising Time', () => {
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let utcOffset = sunrise.getLonUTCOffset(lon);
+            let expected = dayOfYear + ((6 - utcOffset) / 24);
+            let response = sunrise.getRisingTime(lon, dayOfYear);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('getSettingTime()', () => {
+
+        it('Invalid lon parameter', () => {
+            try {
+                sunrise.getSettingTime('foobar');
+                throw 'Allowed an invalid lon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lon');
+            }
+        });
+
+        it('Invalid dayOfYear parameter', () => {
+            try {
+                sunrise.getSettingTime(-78, 'foobar');
+                throw 'Allowed an invalid dayOfYear parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid dayOfYear');
+            }
+        });
+
+        it('Checking Setting Time', () => {
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let utcOffset = sunrise.getLonUTCOffset(lon);
+            let expected = dayOfYear + ((18 - utcOffset) / 24);
+            let response = sunrise.getSettingTime(lon, dayOfYear);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
 });
