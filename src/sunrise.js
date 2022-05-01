@@ -1,7 +1,5 @@
 // Resources
 // https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-// https://www.timeanddate.com/calendar/months/
-// https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
 
 let sunrise = (() => {
 
@@ -9,6 +7,8 @@ let sunrise = (() => {
      * The number of days in each month of a common year
      * 
      * Type: Private Variable
+     * 
+     * Resource: https://www.timeanddate.com/calendar/months/
      * 
      * Author: Corey Lee McLaughlin
      */
@@ -28,41 +28,37 @@ let sunrise = (() => {
     };
 
     /**
-     * Will transform a date into a formatted string YYYYMMDD
+     * Will provide the day of the year when given a specified date
      * 
      * Type: Public Function
      * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
      * Author: Corey Lee McLaughlin
      * 
-     * @param {*} year a four digit number representing the year
-     * @param {*} month a one or two digit number representing a month
-     * @param {*} day a one or two digit number representing the day
-     * @throws Will throw an error if the date is invalid
-     * @returns {String} the date with a format of YYYYMMDD
+     * @param {Number} year 
+     * @param {Number} month 
+     * @param {Number} day 
+     * @throws {String} will throw an error if supplied an invalid date
+     * @returns {Number} the day of the year
      */
-    function formatDate(year, month, day) {
+    function getDayOfYear(year, month, day) {
         if (!this.isValidDate(year, month, day)) {
             throw 'Invalid date';
         }
-        let stringYear = String(year);
-        let stringMonth = String(month);
-        let stringDay = String(day);
-        for (let i = stringYear.length; i < 4; i++) {
-            stringYear = '0' + stringYear;
-        }
-        if (stringMonth.length < 2) {
-            stringMonth = '0' + stringMonth;
-        }
-        if (stringDay.length < 2) {
-            stringDay = '0' + stringDay;
-        }
-        return stringYear + stringMonth + stringDay;
+        let n1 = Math.floor(275 * month / 9);
+        let n2 = Math.floor((month + 9) / 12);
+        let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
+        let n = n1 - (n2 * n3) + day -30;
+        return n;
     }
 
     /**
      * Will return the number of days in a particular month while accounting for leap year
      * 
      * Type: Public Function
+     * 
+     * Resources: https://www.timeanddate.com/calendar/months/
      * 
      * Author: Corey Lee McLaughlin
      * 
@@ -89,6 +85,8 @@ let sunrise = (() => {
      * Will determine whether the year is a leap year
      * 
      * Type: Public Function
+     * 
+     * Resource: https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
      * 
      * Author: Corey Lee McLaughlin
      * 
@@ -195,7 +193,7 @@ let sunrise = (() => {
     }
 
     return {
-        formatDate: formatDate,
+        getDayOfYear: getDayOfYear,
         getMonthDays: getMonthDays,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,

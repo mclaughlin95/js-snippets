@@ -215,45 +215,29 @@ describe('sunrise()', () => {
 
     });
 
-    describe('formatDate()', () => {
-
-        let year = 2022;
-        let month = 10;
-        let day = 10;
+    describe('getDayOfYear()', () => {
 
         it('Invalid date', () => {
             try {
-                sunrise.formatDate(202.2, 5, 1);
-                throw 'Allowed an invalid year';
+                sunrise.getDayOfYear(202.5, 5, 1);
+                throw 'Allowed an invalid date';
             } catch (err) {
                 expect(err).toEqual('Invalid date');
             }
         });
-        
-        it('Returns date string', () => {
-            let response = sunrise.formatDate(year, month, day);
-            let expected = String(year) + String(month) + String(day);
-            expect(response).toEqual(expected);
-        });
 
-        it('Year is four digits', () => {
-            let year = 1;
-            let response = sunrise.formatDate(year, month, day);
-            let expected = '000' + String(year) + String(month) + String(day);
-            expect(response).toEqual(expected);
-        });
-
-        it('Month is two digits', () => {
-            let month = 1;
-            let response = sunrise.formatDate(year, month, day);
-            let expected = String(year) + '0' + String(month) + String(day);
-            expect(response).toEqual(expected);
-        });
-
-        it('Day is two digits', () => {
+        it('Returns day of year', () => {
+            let year = 2022;
+            let month = 5;
             let day = 1;
-            let response = sunrise.formatDate(year, month, day);
-            let expected = String(year) + String(month) + '0' + String(day);
+            let expected = (() => {
+                let n1 = Math.floor(275 * month / 9);
+                let n2 = Math.floor((month + 9) / 12);
+                let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
+                let n = n1 - (n2 * n3) + day -30;
+                return n;
+            })();
+            let response = sunrise.getDayOfYear(year, month, day);
             expect(response).toEqual(expected);
         });
 
