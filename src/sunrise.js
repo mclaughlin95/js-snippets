@@ -1,68 +1,62 @@
+// Resources
 // https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+// https://www.timeanddate.com/calendar/months/
+// https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
 
 let sunrise = (() => {
 
     /**
-     * Will determine whether the year is valid.
+     * The number of days in each month of a common year
      * 
-     * Valid Years: A whole number ranging from 1 to 9999
-     * 
-     * Type: Function
+     * Type: Private Variable
      * 
      * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} year a four digit number representing the year
-     * @returns {Boolean}
      */
-    function isValidYear(year) {
-        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) {
-            return true;
-        }
-        return false;
-    }
+     let monthDays = {
+        1: 31, // January
+        2: 28, // February
+        3: 31, // March
+        4: 30, // April
+        5: 31, // May
+        6: 30, // June
+        7: 31, // July
+        8: 31, // August
+        9: 30, // September
+        10: 31, // October
+        11: 30, // November
+        12: 31 // December
+    };
 
     /**
-     * Will determine whether the month is valid
+     * Will return the number of days in a particular month while accounting for leap year
      * 
-     * Valid Months: A whole number ranging from 1 to 12
-     * 
-     * Type: Function
+     * Type: Public Function
      * 
      * Author: Corey Lee McLaughlin
      * 
      * @param {Number} month a one or two digit number representing a month
-     * @returns 
+     * @param {Number} year a four digit number representing the year
+     * @throws Will throw an error if supplied month is invalid
+     * @throws Will throw an error if supplied year is invalid
+     * @returns {Number} the number of days in the given month
      */
-    function isValidMonth(month) {
-        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) {
-            return true;
+     function getMonthDays(month, year) {
+        if (!this.isValidMonth(month)) {
+            throw 'Invalid month';
         }
-        return false;
-    }
-
-    /**
-     * Will determine whether the day is valid
-     * 
-     * Valid Days: A whole number ranging from 1 to 31
-     * 
-     * Type: Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} day a one or two digit number representing the day 
-     * @returns 
-     */
-    function isValidDay(day) {
-        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) {
-            return true;
+        if (!this.isValidYear(year)) {
+            throw 'Invalid year';
         }
-        return false;
+        if (this.isLeapYear(year) && month == 2) {
+            return monthDays[2] + 1;
+        }
+        return monthDays[month];
     }
 
     /**
      * Will determine whether the year is a leap year
      * 
-     * Type: Function
+     * Type: Public Function
      * 
      * Author: Corey Lee McLaughlin
      * 
@@ -70,7 +64,7 @@ let sunrise = (() => {
      * @throws Will throw an error if year is not valid. See isValidYear() for more information
      * @returns {Boolean}
      */
-    function isLeapYear(year) {
+     function isLeapYear(year) {
         if (!this.isValidYear(year)) {
             throw 'Invalid year';
         }
@@ -90,28 +84,91 @@ let sunrise = (() => {
     }
 
     /**
-     * Will parse a date for the use of calculating sunrise and sunset values. 
+     * Will determine whether the supplied date is valid, while accounting for leap year 
      * 
-     * Type: Function
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @param {Number} month a one or two digit number representing a month
+     * @param {Number} day a one or two digit number representing the day
+     * @returns {Boolean}
      */
-    function validateDate(year, month, day) {
-        if (!this.isValidYear(year)) {
-            throw 'Invalid year';
+     function isValidDate(year, month, day) {
+        if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) {
+            return false;
         }
-        if (!this.isValidMonth(month)) {
-            throw 'Invalid month';
+        if (day > this.getMonthDays(month, year)) {
+            return false;
         }
-        if (!this.isValidDay(day)) {
-            throw 'Invalid day';
-        }
+        return true;
     }   
 
+    /**
+     * Will determine whether the day is valid
+     * 
+     * Valid Days: A whole number ranging from 1 to 31
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} day a one or two digit number representing the day 
+     * @returns {Boolean}
+     */
+     function isValidDay(day) {
+        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the month is valid
+     * 
+     * Valid Months: A whole number ranging from 1 to 12
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} month a one or two digit number representing a month
+     * @returns {Boolean}
+     */
+     function isValidMonth(month) {
+        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Will determine whether the year is valid.
+     * 
+     * Valid Years: A whole number ranging from 1 to 9999
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @returns {Boolean}
+     */
+    function isValidYear(year) {
+        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) {
+            return true;
+        }
+        return false;
+    }
+
     return {
-        isValidYear: isValidYear,
-        isValidMonth: isValidMonth,
-        isValidDay: isValidDay,
+        getMonthDays: getMonthDays,
         isLeapYear: isLeapYear,
-        validateDate: validateDate
+        isValidDate: isValidDate,
+        isValidDay: isValidDay,
+        isValidMonth: isValidMonth,
+        isValidYear: isValidYear
     };
 
 })();

@@ -133,161 +133,84 @@ describe('sunrise()', () => {
 
     });
 
-    describe('validateDate()', () => {
+    describe('getMonthDays', () => {
 
-        describe('Year parameter validation', () => {
-            
-            let errorMessage = 'Invalid year';
-
-            it('Undefined year parameter', () => {
-                try {
-                    sunrise.validateDate();
-                    throw 'Allowed undefined year parameter';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Invalid year parameter data type', () => {
-                try {
-                    sunrise.validateDate('foobar');
-                    throw 'Allowed invalid year parameter data type';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Year must be greater than 0', () => {
-                try {
-                    sunrise.validateDate(0);
-                    throw 'Allowed a year of 0 or less';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Year must be less than or equal to 9999', () => {
-                try {
-                    sunrise.validateDate(10000);
-                    throw 'Allowed a year greater than 9999';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Year must be a whole number', () => {
-                try {
-                    sunrise.validateDate(20.22);
-                    throw 'Allowed a non whole number year';
-                } catch(err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
+        it('Invalid month', () => {
+            try {
+                sunrise.getMonthDays(5.5);
+                throw 'Allowed invalid month';
+            } catch (err) {
+                expect(err).toEqual('Invalid month');
+            }
         });
 
-        describe('Month parameter validation', () => {
-
-            let errorMessage = 'Invalid month';
-            let year = 2022;
-
-            it('Undefined month parameter', () => {
-                try {
-                    sunrise.validateDate(year, undefined);
-                    throw 'Allowed an undefined month';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Invalid month parameter data type', () => {
-                try {
-                    sunrise.validateDate(year, 'foobar');
-                    throw 'Allowed an invalid month parameter data type';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Month must greater than 0', () => {
-                try {
-                    sunrise.validateDate(year, 0);
-                    throw 'Allowed a month of 0 or less than 0';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Month must be less than or equal to 12', () => {
-                try {
-                    sunrise.validateDate(year, 13);
-                    throw 'Allowed a month greater than 12';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
-
-            it('Month must be a whole number', () => {
-                try {
-                    sunrise.validateDate(year, 5.5);
-                    throw 'Allowed a non whole number month';
-                } catch(err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+        it('Invalid year', () => {
+            try {
+                sunrise.getMonthDays(5, 2022.5);
+                throw 'Allowed invalid year';
+            } catch (err) {
+                expect(err).toEqual('Invalid year');
+            }
         });
 
-        describe('Day parameter validation', () => {
-
-            let errorMessage = 'Invalid day';
+        it('Nonleap Year Months Days', () => {
             let year = 2022;
-            let month = 5;
+            expect(sunrise.getMonthDays(1, year)).toEqual(31); // January
+            expect(sunrise.getMonthDays(2, year)).toEqual(28); // February
+            expect(sunrise.getMonthDays(3, year)).toEqual(31); // March
+            expect(sunrise.getMonthDays(4, year)).toEqual(30); // April
+            expect(sunrise.getMonthDays(5, year)).toEqual(31); // May
+            expect(sunrise.getMonthDays(6, year)).toEqual(30); // June
+            expect(sunrise.getMonthDays(7, year)).toEqual(31); // July
+            expect(sunrise.getMonthDays(8, year)).toEqual(31); // August
+            expect(sunrise.getMonthDays(9, year)).toEqual(30); // September
+            expect(sunrise.getMonthDays(10, year)).toEqual(31); // October
+            expect(sunrise.getMonthDays(11, year)).toEqual(30); // November
+            expect(sunrise.getMonthDays(12, year)).toEqual(31); // December
+        });
 
-            it('Undefined day parameter', () => {
-                try {
-                    sunrise.validateDate(year, month, undefined);
-                    throw 'Allowed an undefined day';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+        it('Leap Year Months Days', () => {
+            let year = 2000;
+            expect(sunrise.getMonthDays(1, year)).toEqual(31); // January
+            expect(sunrise.getMonthDays(2, year)).toEqual(29); // February
+            expect(sunrise.getMonthDays(3, year)).toEqual(31); // March
+            expect(sunrise.getMonthDays(4, year)).toEqual(30); // April
+            expect(sunrise.getMonthDays(5, year)).toEqual(31); // May
+            expect(sunrise.getMonthDays(6, year)).toEqual(30); // June
+            expect(sunrise.getMonthDays(7, year)).toEqual(31); // July
+            expect(sunrise.getMonthDays(8, year)).toEqual(31); // August
+            expect(sunrise.getMonthDays(9, year)).toEqual(30); // September
+            expect(sunrise.getMonthDays(10, year)).toEqual(31); // October
+            expect(sunrise.getMonthDays(11, year)).toEqual(30); // November
+            expect(sunrise.getMonthDays(12, year)).toEqual(31); // December
+        });
 
-            it('Invalid day parameter data type', () => {
-                try {
-                    sunrise.validateDate(year, month, 'foobar');
-                    throw 'Allowed invalid day parameter data type';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+    });
 
-            it('Day must be greater than 0', () => {
-                try {
-                    sunrise.validateDate(year, month, 0);
-                    throw 'Allowed day to be less than or equal to 0';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+    describe('isValidDate()', () => {
 
-            it('Day must be less than or equal to 31', () => {
-                try {
-                    sunrise.validateDate(year, month, 32);
-                    throw 'Allowed more than 31 days';
-                } catch (err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+        let year = 2022;
+        let month = 2;
+        let day = 1;
 
-            it('Day must be a whole number', () => {
-                try {
-                    sunrise.validateDate(year, month, 5.5);
-                    throw 'Allowed a non whole number day';
-                } catch(err) {
-                    expect(err).toEqual(errorMessage);
-                }
-            });
+        it('Invalid year', () => {
+            expect(sunrise.isValidDate(20.5, month, day)).toBeFalse();
+        });
 
+        it('Invalid month', () => {
+            expect(sunrise.isValidDate(year, 5.5, day)).toBeFalse();
+        });
+
+        it('Invalid day', () => {
+            expect(sunrise.isValidDate(year, month, 1.5)).toBeFalse();
+        });
+
+        it('Invalid leap year month days', () => {
+            expect(sunrise.isValidDate(year, month, 29)).toBeFalse();
+        });
+
+        it('Valid leap year month days', () => {
+            expect(sunrise.isValidDate(2000, month, 29));
         });
 
     });
