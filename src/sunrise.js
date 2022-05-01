@@ -28,6 +28,33 @@ let sunrise = (() => {
     };
 
     /**
+     * A series of Sun's Zenith for sunrise/sunset
+     * 
+     * Type: Private Variable
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     */
+     let observedZeniths = {
+        official: 90.88, //90.88, 90.5, 90?
+        civil: 96,
+        natical: 102,
+        astronomical: 108
+    };
+
+    /**
+     * Sun's Zenith for sunrise/sunset
+     * 
+     * Type: Public Variable
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     */
+    let zenith = observedZeniths.official;
+
+    /**
      * Will provide the day of the year when given a specified date
      * 
      * Type: Public Function
@@ -219,31 +246,31 @@ function calculateSunrise(yyyymmdd, lon, lat) {
 
     /////////////////////////////////////////////////////////////////////// calculate day of the year
 
-    // Convert String to numbers
-    var date = parseInt(yyyymmdd);
-    var lon = parseFloat(lon);
-    var lat = parseFloat(lat);
+    // // Convert String to numbers
+    // var date = parseInt(yyyymmdd);
+    // var lon = parseFloat(lon);
+    // var lat = parseFloat(lat);
 
-    // Parse date
-    var day = date % 100;
-    var year = date / 10000;
-    var month = (date / 100) % 100;
-    var mmdd = (month * 100) + day;
+    // // Parse date
+    // var day = date % 100;
+    // var year = date / 10000;
+    // var month = (date / 100) % 100;
+    // var mmdd = (month * 100) + day;
 
-    day = Math.floor(day);
-    year = Math.floor(year);
-    month = Math.floor(month);
-    mmdd = Math.floor(mmdd);
+    // day = Math.floor(day);
+    // year = Math.floor(year);
+    // month = Math.floor(month);
+    // mmdd = Math.floor(mmdd);
 
-    // Calculate the day of the year
-    var n1 = Math.floor(275.0 * month / 9.0);
-    var n2 = Math.floor((month + 9.0) / 12.0);
-    var n3 = (1 + Math.floor((year - 4.0 * Math.floor(year / 4.0) + 2.0) / 3.0));
-    var n = n1 - (n2 * n3) + day - 30;
+    // // Calculate the day of the year
+    // var n1 = Math.floor(275.0 * month / 9.0);
+    // var n2 = Math.floor((month + 9.0) / 12.0);
+    // var n3 = (1 + Math.floor((year - 4.0 * Math.floor(year / 4.0) + 2.0) / 3.0));
+    // var n = n1 - (n2 * n3) + day - 30;
 
 
-    console.log('Day Of Year');
-    console.log(n)
+    // console.log('Day Of Year');
+    // console.log(n)
 
 
 
