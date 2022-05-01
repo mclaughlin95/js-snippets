@@ -187,6 +187,7 @@ let sunrise = (() => {
      * Author: Corey Lee McLaughlin
      * 
      * @param {Number} time the rising or setting time 
+     * @throws {String} will throw an error if time is not a number
      * @returns {Number} the suns mean anomaly
      */
     function getSunsMeanAnomaly(time) {
@@ -194,6 +195,34 @@ let sunrise = (() => {
             throw 'Invalid time';
         }
         return (0.9856 * time) - 3.289;
+    }
+
+    /**
+     * Will calculate the Suns True Longitude from Suns Mean Anomaly
+     * 
+     * Step Four of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} sunsMeanAnomaly the suns mean anomaly
+     * @throws {String} will throw an error if suns mean anomaly is not a number
+     * @returns {Number} the suns true longitude
+     */
+    function getSunsTrueLon(sunsMeanAnomaly) {
+        if (typeof sunsMeanAnomaly != 'number') {
+            throw 'Invalid sunsMeanAnomaly';
+        }
+        let lon = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180.0) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180.0) * sunsMeanAnomaly)) + 282.634;
+        if (lon < 0.0) {
+            lon += 360.0;
+        } else if (lon >= 360.0) {
+            lon -= 360.0;
+        }
+        return lon;
     }
 
     /**
@@ -377,6 +406,7 @@ let sunrise = (() => {
         getRisingTime: getRisingTime,
         getSettingTime: getSettingTime,
         getSunsMeanAnomaly: getSunsMeanAnomaly,
+        getSunsTrueLon: getSunsTrueLon,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,
         isValidDay: isValidDay,

@@ -385,7 +385,7 @@ describe('sunrise()', () => {
 
     describe('getSunsMeanAnomaly()', () => {
 
-        it('Undefined time parameter data type', () => {
+        it('Undefined time parameter', () => {
             try {
                 sunrise.getSunsMeanAnomaly();
                 throw 'Allowed undefined time parameter data type';
@@ -409,6 +409,43 @@ describe('sunrise()', () => {
             let time = sunrise.getRisingTime(lon, dayOfYear);
             let expected = (0.9856 * time) - 3.289;
             let response = sunrise.getSunsMeanAnomaly(time);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('getSunsTrueLon()', () => {
+
+        it('Undefined sunsMeanAnomaly parameter', () => {
+            try {
+                sunrise.getSunsTrueLon();
+                throw 'Allowed undefined sunsMeanAnomaly parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsMeanAnomaly');
+            }
+        });
+
+        it('Invalid sunsMeanAnomaly parameter data type', () => {
+            try {
+                sunrise.getSunsTrueLon('foobar');
+                throw 'Allowed invalid sunsMeanAnomaly parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsMeanAnomaly');
+            }
+        });
+
+        it('Calculating the Suns True Longitude (Based on Rising Time)', () => {
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let time = sunrise.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
+            let expected = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180.0) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180.0) * sunsMeanAnomaly)) + 282.634;
+            if (expected < 0.0) {
+                expected += 360.0;
+            } else if (expected >= 360.0) {
+                expected -= 360.0;
+            }
+            let response = sunrise.getSunsTrueLon(sunsMeanAnomaly);
             expect(response).toEqual(expected);
         });
 
