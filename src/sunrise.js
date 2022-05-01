@@ -176,6 +176,27 @@ let sunrise = (() => {
     }
 
     /**
+     * Will calculate the suns mean anomaly based on a given rising or setting time
+     * 
+     * Step Three of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} time the rising or setting time 
+     * @returns {Number} the suns mean anomaly
+     */
+    function getSunsMeanAnomaly(time) {
+        if (typeof time != 'number'){
+            throw 'Invalid time';
+        }
+        return (0.9856 * time) - 3.289;
+    }
+
+    /**
      * Will determine whether the year is a leap year
      * 
      * Type: Public Function
@@ -355,6 +376,7 @@ let sunrise = (() => {
         getMonthDays: getMonthDays,
         getRisingTime: getRisingTime,
         getSettingTime: getSettingTime,
+        getSunsMeanAnomaly: getSunsMeanAnomaly,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,
         isValidDay: isValidDay,

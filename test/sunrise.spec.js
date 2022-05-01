@@ -383,4 +383,35 @@ describe('sunrise()', () => {
 
     });
 
+    describe('getSunsMeanAnomaly()', () => {
+
+        it('Undefined time parameter data type', () => {
+            try {
+                sunrise.getSunsMeanAnomaly();
+                throw 'Allowed undefined time parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Invalid time parameter data type', () => {
+            try {
+                sunrise.getSunsMeanAnomaly('foobar');
+                throw 'Allowed invalid time parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Calculating Suns Mean Anomaly (Based on Rising Time)', () => {
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let time = sunrise.getRisingTime(lon, dayOfYear);
+            let expected = (0.9856 * time) - 3.289;
+            let response = sunrise.getSunsMeanAnomaly(time);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
 });
