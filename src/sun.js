@@ -1,6 +1,5 @@
 // Resources
 // https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-
 let sun = (() => {
 
     /**
@@ -37,7 +36,7 @@ let sun = (() => {
      * Author: Corey Lee McLaughlin
      */
      let observedZeniths = {
-        official: 90.88, //90.88, 90.5, 90?
+        official: 90.88,
         civil: 96,
         natical: 102,
         astronomical: 108
@@ -70,14 +69,11 @@ let sun = (() => {
      * @returns {Number} the day of the year
      */
     function getDayOfYear(year, month, day) {
-        if (!this.isValidDate(year, month, day)) {
-            throw 'Invalid date';
-        }
+        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
         let n1 = Math.floor(275 * month / 9);
         let n2 = Math.floor((month + 9) / 12);
         let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
-        let n = n1 - (n2 * n3) + day -30;
-        return n;
+        return n1 - (n2 * n3) + day - 30;
     }
 
     /**
@@ -96,15 +92,9 @@ let sun = (() => {
      * @returns {Number} the local mean time
      */
     function getLocalMeanTime(hours, time, rightAscension) {
-        if (typeof hours != 'number') {
-            throw 'Invalid hours';
-        }
-        if (typeof time != 'number') {
-            throw 'Invalid time';
-        }
-        if (typeof rightAscension != 'number') {
-            throw 'Invalid rightAscension';
-        }
+        if (typeof hours != 'number') { throw 'Invalid hours'; }
+        if (typeof time != 'number') { throw 'Invalid time'; }
+        if (typeof rightAscension != 'number') { throw 'Invalid rightAscension'; }
         return hours + rightAscension - (0.06571 * time) - 6.622;
     }
 
@@ -123,9 +113,7 @@ let sun = (() => {
      * @returns {Number} the hour value of the longitude coordinate
      */
      function getLonUTCOffset(lon) {
-        if (!this.isValidLon(lon)) {
-            throw 'Invalid lon';
-        }
+        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
         return lon / 15;
     }
 
@@ -145,15 +133,9 @@ let sun = (() => {
      * @returns {Number} the number of days in the given month
      */
      function getMonthDays(month, year) {
-        if (!this.isValidMonth(month)) {
-            throw 'Invalid month';
-        }
-        if (!this.isValidYear(year)) {
-            throw 'Invalid year';
-        }
-        if (this.isLeapYear(year) && month == 2) {
-            return monthDays[2] + 1;
-        }
+        if (!this.isValidMonth(month)) { throw 'Invalid month'; }
+        if (!this.isValidYear(year)) { throw 'Invalid year'; }
+        if (this.isLeapYear(year) && month == 2) { return monthDays[2] + 1; }
         return monthDays[month];
     }
 
@@ -174,9 +156,7 @@ let sun = (() => {
      */
     function getRisingTime(lon, dayOfYear) {
         let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.isValidDayOfYear(dayOfYear)) {
-            throw 'Invalid dayOfYear';
-        }
+        if (!this.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((6 - utcOffset) / 24);
     }
 
@@ -197,9 +177,7 @@ let sun = (() => {
      */
     function getSettingTime(lon, dayOfYear) {
         let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.isValidDayOfYear(dayOfYear)) {
-            throw 'Invalid dayOfYear';
-        }
+        if (!this.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((18 - utcOffset) / 24);
     }
 
@@ -219,12 +197,8 @@ let sun = (() => {
      * @returns {Number} The Suns Local Hour Angle
      */
     function getSunsLocalHourAngle(sunsTrueLon, lat) {
-        if (typeof sunsTrueLon != 'number') {
-            throw 'Invalid sunsTrueLon';
-        }
-        if (!this.isValidLat(lat)) {
-            throw 'Invalid lat';
-        }
+        if (typeof sunsTrueLon != 'number') { throw 'Invalid sunsTrueLon'; }
+        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
         let sinDeclination = 0.39782 * Math.sin((Math.PI / 180) * sunsTrueLon);
         let cosDeclination = Math.cos(Math.asin(sinDeclination));
         return (Math.cos((Math.PI / 180) * this.zenith) - (sinDeclination * Math.sin((Math.PI / 180) * lat))) / (cosDeclination * Math.cos((Math.PI / 180) * lat));
@@ -246,9 +220,7 @@ let sun = (() => {
      * @returns {Number} the suns mean anomaly
      */
     function getSunsMeanAnomaly(time) {
-        if (typeof time != 'number'){
-            throw 'Invalid time';
-        }
+        if (typeof time != 'number'){ throw 'Invalid time'; }
         return (0.9856 * time) - 3.289;
     }
 
@@ -266,9 +238,7 @@ let sun = (() => {
      * @returns {Number} The Suns Right Ascension
      */
     function getSunsRightAscension(sunsTrueLon) {
-        if (typeof sunsTrueLon != 'number') {
-            throw 'Invalid sunsTrueLon';
-        }
+        if (typeof sunsTrueLon != 'number') { throw 'Invalid sunsTrueLon'; }
         let rightAscension = (180 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180) * sunsTrueLon));
         let lonQuadrant = (Math.floor(sunsTrueLon / 90)) * 90;
         let rightAscensionQuadrant = (Math.floor(rightAscension / 90)) * 90;
@@ -292,9 +262,7 @@ let sun = (() => {
      * @returns {Number} the suns true longitude
      */
     function getSunsTrueLon(sunsMeanAnomaly) {
-        if (typeof sunsMeanAnomaly != 'number') {
-            throw 'Invalid sunsMeanAnomaly';
-        }
+        if (typeof sunsMeanAnomaly != 'number') { throw 'Invalid sunsMeanAnomaly'; }
         let lon = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180) * sunsMeanAnomaly)) + 282.634;
         if (lon < 0) {
             lon += 360;
@@ -318,9 +286,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
      function isLeapYear(year) {
-        if (!this.isValidYear(year)) {
-            throw 'Invalid year';
-        }
+        if (!this.isValidYear(year)) { throw 'Invalid year'; }
         return (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
     }
 
@@ -337,12 +303,8 @@ let sun = (() => {
      * @returns {Boolean}
      */
      function isValidDate(year, month, day) {
-        if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) {
-            return false;
-        }
-        if (day > this.getMonthDays(month, year)) {
-            return false;
-        }
+        if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) { return false; }
+        if (day > this.getMonthDays(month, year)) { return false; }
         return true;
     }   
 
@@ -359,9 +321,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
      function isValidDay(day) {
-        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) {
-            return true;
-        }
+        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) { return true; }
         return false;
     }
 
@@ -378,9 +338,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
     function isValidDayOfYear(day) {
-        if (typeof day == 'number' && day > 0 && day < 367) {
-            return true;
-        }
+        if (typeof day == 'number' && day > 0 && day < 367) { return true; }
         return false;
     }
 
@@ -400,9 +358,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
     function isValidLat(lat) {
-        if (typeof lat == 'number' && lat >= -90 && lat <= 90) {
-            return true;
-        }
+        if (typeof lat == 'number' && lat >= -90 && lat <= 90) { return true; }
         return false;
     }
 
@@ -422,9 +378,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
     function isValidLon(lon) {
-        if (typeof lon == 'number' && lon >= -180 && lon <= 180) {
-            return true;
-        }
+        if (typeof lon == 'number' && lon >= -180 && lon <= 180) { return true; }
         return false;
     }
 
@@ -441,9 +395,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
      function isValidMonth(month) {
-        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) {
-            return true;
-        }
+        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) { return true; }
         return false;
     }
 
@@ -460,9 +412,7 @@ let sun = (() => {
      * @returns {Boolean}
      */
     function isValidYear(year) {
-        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) {
-            return true;
-        }
+        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) { return true; }
         return false;
     }
 
@@ -551,7 +501,7 @@ let sun = (() => {
         if (typeof time != 'number') { throw 'Invalid time'; }
         if (typeof offset != 'number') { throw 'Invalid offset'; }
         let utc = time - offset;
-        while (utc < 0) { utc += 24;}
+        while (utc < 0) { utc += 24; }
         while (utc >= 24) { utc -= 24; }
         return utc;
     }
