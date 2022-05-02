@@ -3,216 +3,267 @@ import { calculateSunrise } from '../src/sun.js';
 
 describe('sun', () => {
 
-    describe('isValidYear()', () => {
+    describe('timeLib', () => {
 
-        it('Undefined year', () => {
-            expect(sun.isValidYear()).toBeFalse();
-            expect(sun.isValidYear(undefined)).toBeFalse();
+        describe('isValidYear()', () => {
+
+            it('Undefined year', () => {
+                expect(sun.timeLib.isValidYear()).toBeFalse();
+                expect(sun.timeLib.isValidYear(undefined)).toBeFalse();
+            });
+    
+            it('Year is number data type', () => {
+                expect(sun.timeLib.isValidYear(2022)).toBeTrue();
+            });
+    
+            it('Year is greater than 0', () => {
+                expect(sun.timeLib.isValidYear(0)).toBeFalse();
+            });
+    
+            it('Year is four digits', () => {
+                expect(sun.timeLib.isValidYear(10000)).toBeFalse();
+            });
+    
+            it('Year is a whole number', () => {
+                expect(sun.timeLib.isValidYear(25.5)).toBeFalse();
+            });
+    
         });
 
-        it('Year is number data type', () => {
-            expect(sun.isValidYear(2022)).toBeTrue();
+        describe('isValidMonth()', () => {
+
+            it('Undefined month parameter', () => {
+                expect(sun.timeLib.isValidMonth()).toBeFalse();
+                expect(sun.timeLib.isValidMonth(undefined)).toBeFalse();
+            });
+    
+            it('Month number data type', () => {
+                expect(sun.timeLib.isValidMonth(5)).toBeTrue();
+            });
+    
+            it('Month is greater than 0', () => {
+                expect(sun.timeLib.isValidMonth(0)).toBeFalse();
+            });
+    
+            it('Month is less than or equal to 12', () => {
+                expect(sun.timeLib.isValidMonth(13)).toBeFalse();
+            });
+    
+            it('Month is a whole number', () => {
+                expect(sun.timeLib.isValidMonth(2.5)).toBeFalse();
+            });
+    
         });
 
-        it('Year is greater than 0', () => {
-            expect(sun.isValidYear(0)).toBeFalse();
+        describe('isValidDay()', () => {
+
+            it('Undefined day parameter', () => {
+                expect(sun.timeLib.isValidDay()).toBeFalse();
+                expect(sun.timeLib.isValidDay(undefined)).toBeFalse();
+            });
+    
+            it('Day number data type', () => {
+                expect(sun.timeLib.isValidDay(1)).toBeTrue();
+            });
+    
+            it('Day is greater than 0', () => {
+                expect(sun.timeLib.isValidDay(0)).toBeFalse();
+            });
+    
+            it('Day is less than or equal to 31', () => {
+                expect(sun.timeLib.isValidDay(32)).toBeFalse();
+            });
+    
+            it('Day is a whole number', () => {
+                expect(sun.timeLib.isValidDay(1.5)).toBeFalse();
+            });
+    
         });
 
-        it('Year is four digits', () => {
-            expect(sun.isValidYear(10000)).toBeFalse();
+        describe('isLeapYear()', () => {
+
+            it('Valid year', () => {
+                try {
+                    sun.timeLib.isLeapYear('foobar');
+                    throw 'Allowed an invalid year';
+                } catch (err) {
+                    expect(err).toEqual('Invalid year');
+                }
+            });
+    
+            it('Non leap year', () => {
+                expect(sun.timeLib.isLeapYear(2022)).toBeFalse();
+            });
+    
+            it('Leap year divisable by 4', () => {
+                expect(sun.timeLib.isLeapYear(2016)).toBeTrue();
+            });
+    
+            it('Leap year is not divisable by 100', () => {
+                expect(sun.timeLib.isLeapYear(2022)).toBeFalse();
+            });
+    
+            it('Leap year is divisable by 400', () => {
+                expect(sun.timeLib.isLeapYear(2000)).toBeTrue();
+            });
+    
         });
 
-        it('Year is a whole number', () => {
-            expect(sun.isValidYear(25.5)).toBeFalse();
+        describe('getMonthDays', () => {
+
+            it('Invalid month', () => {
+                try {
+                    sun.timeLib.getMonthDays(5.5);
+                    throw 'Allowed invalid month';
+                } catch (err) {
+                    expect(err).toEqual('Invalid month');
+                }
+            });
+    
+            it('Invalid year', () => {
+                try {
+                    sun.timeLib.getMonthDays(5, 2022.5);
+                    throw 'Allowed invalid year';
+                } catch (err) {
+                    expect(err).toEqual('Invalid year');
+                }
+            });
+    
+            it('Nonleap Year Months Days', () => {
+                let year = 2022;
+                expect(sun.timeLib.getMonthDays(1, year)).toEqual(31); // January
+                expect(sun.timeLib.getMonthDays(2, year)).toEqual(28); // February
+                expect(sun.timeLib.getMonthDays(3, year)).toEqual(31); // March
+                expect(sun.timeLib.getMonthDays(4, year)).toEqual(30); // April
+                expect(sun.timeLib.getMonthDays(5, year)).toEqual(31); // May
+                expect(sun.timeLib.getMonthDays(6, year)).toEqual(30); // June
+                expect(sun.timeLib.getMonthDays(7, year)).toEqual(31); // July
+                expect(sun.timeLib.getMonthDays(8, year)).toEqual(31); // August
+                expect(sun.timeLib.getMonthDays(9, year)).toEqual(30); // September
+                expect(sun.timeLib.getMonthDays(10, year)).toEqual(31); // October
+                expect(sun.timeLib.getMonthDays(11, year)).toEqual(30); // November
+                expect(sun.timeLib.getMonthDays(12, year)).toEqual(31); // December
+            });
+    
+            it('Leap Year Months Days', () => {
+                let year = 2000;
+                expect(sun.timeLib.getMonthDays(1, year)).toEqual(31); // January
+                expect(sun.timeLib.getMonthDays(2, year)).toEqual(29); // February
+                expect(sun.timeLib.getMonthDays(3, year)).toEqual(31); // March
+                expect(sun.timeLib.getMonthDays(4, year)).toEqual(30); // April
+                expect(sun.timeLib.getMonthDays(5, year)).toEqual(31); // May
+                expect(sun.timeLib.getMonthDays(6, year)).toEqual(30); // June
+                expect(sun.timeLib.getMonthDays(7, year)).toEqual(31); // July
+                expect(sun.timeLib.getMonthDays(8, year)).toEqual(31); // August
+                expect(sun.timeLib.getMonthDays(9, year)).toEqual(30); // September
+                expect(sun.timeLib.getMonthDays(10, year)).toEqual(31); // October
+                expect(sun.timeLib.getMonthDays(11, year)).toEqual(30); // November
+                expect(sun.timeLib.getMonthDays(12, year)).toEqual(31); // December
+            });
+    
         });
 
-    });
-
-    describe('isValidMonth()', () => {
-
-        it('Undefined month parameter', () => {
-            expect(sun.isValidMonth()).toBeFalse();
-            expect(sun.isValidMonth(undefined)).toBeFalse();
-        });
-
-        it('Month number data type', () => {
-            expect(sun.isValidMonth(5)).toBeTrue();
-        });
-
-        it('Month is greater than 0', () => {
-            expect(sun.isValidMonth(0)).toBeFalse();
-        });
-
-        it('Month is less than or equal to 12', () => {
-            expect(sun.isValidMonth(13)).toBeFalse();
-        });
-
-        it('Month is a whole number', () => {
-            expect(sun.isValidMonth(2.5)).toBeFalse();
-        });
-
-    });
-
-    describe('isValidDay()', () => {
-
-        it('Undefined day parameter', () => {
-            expect(sun.isValidDay()).toBeFalse();
-            expect(sun.isValidDay(undefined)).toBeFalse();
-        });
-
-        it('Day number data type', () => {
-            expect(sun.isValidDay(1)).toBeTrue();
-        });
-
-        it('Day is greater than 0', () => {
-            expect(sun.isValidDay(0)).toBeFalse();
-        });
-
-        it('Day is less than or equal to 31', () => {
-            expect(sun.isValidDay(32)).toBeFalse();
-        });
-
-        it('Day is a whole number', () => {
-            expect(sun.isValidDay(1.5)).toBeFalse();
-        });
-
-    });
-
-    describe('isLeapYear()', () => {
-
-        it('Valid year', () => {
-            try {
-                sun.isLeapYear('foobar');
-                throw 'Allowed an invalid year';
-            } catch (err) {
-                expect(err).toEqual('Invalid year');
-            }
-        });
-
-        it('Non leap year', () => {
-            expect(sun.isLeapYear(2022)).toBeFalse();
-        });
-
-        it('Leap year divisable by 4', () => {
-            expect(sun.isLeapYear(2016)).toBeTrue();
-        });
-
-        it('Leap year is not divisable by 100', () => {
-            expect(sun.isLeapYear(2022)).toBeFalse();
-        });
-
-        it('Leap year is divisable by 400', () => {
-            expect(sun.isLeapYear(2000)).toBeTrue();
-        });
-
-    });
-
-    describe('getMonthDays', () => {
-
-        it('Invalid month', () => {
-            try {
-                sun.getMonthDays(5.5);
-                throw 'Allowed invalid month';
-            } catch (err) {
-                expect(err).toEqual('Invalid month');
-            }
-        });
-
-        it('Invalid year', () => {
-            try {
-                sun.getMonthDays(5, 2022.5);
-                throw 'Allowed invalid year';
-            } catch (err) {
-                expect(err).toEqual('Invalid year');
-            }
-        });
-
-        it('Nonleap Year Months Days', () => {
+        describe('isValidDate()', () => {
             let year = 2022;
-            expect(sun.getMonthDays(1, year)).toEqual(31); // January
-            expect(sun.getMonthDays(2, year)).toEqual(28); // February
-            expect(sun.getMonthDays(3, year)).toEqual(31); // March
-            expect(sun.getMonthDays(4, year)).toEqual(30); // April
-            expect(sun.getMonthDays(5, year)).toEqual(31); // May
-            expect(sun.getMonthDays(6, year)).toEqual(30); // June
-            expect(sun.getMonthDays(7, year)).toEqual(31); // July
-            expect(sun.getMonthDays(8, year)).toEqual(31); // August
-            expect(sun.getMonthDays(9, year)).toEqual(30); // September
-            expect(sun.getMonthDays(10, year)).toEqual(31); // October
-            expect(sun.getMonthDays(11, year)).toEqual(30); // November
-            expect(sun.getMonthDays(12, year)).toEqual(31); // December
-        });
-
-        it('Leap Year Months Days', () => {
-            let year = 2000;
-            expect(sun.getMonthDays(1, year)).toEqual(31); // January
-            expect(sun.getMonthDays(2, year)).toEqual(29); // February
-            expect(sun.getMonthDays(3, year)).toEqual(31); // March
-            expect(sun.getMonthDays(4, year)).toEqual(30); // April
-            expect(sun.getMonthDays(5, year)).toEqual(31); // May
-            expect(sun.getMonthDays(6, year)).toEqual(30); // June
-            expect(sun.getMonthDays(7, year)).toEqual(31); // July
-            expect(sun.getMonthDays(8, year)).toEqual(31); // August
-            expect(sun.getMonthDays(9, year)).toEqual(30); // September
-            expect(sun.getMonthDays(10, year)).toEqual(31); // October
-            expect(sun.getMonthDays(11, year)).toEqual(30); // November
-            expect(sun.getMonthDays(12, year)).toEqual(31); // December
-        });
-
-    });
-
-    describe('isValidDate()', () => {
-
-        let year = 2022;
-        let month = 2;
-        let day = 1;
-
-        it('Invalid year', () => {
-            expect(sun.isValidDate(20.5, month, day)).toBeFalse();
-        });
-
-        it('Invalid month', () => {
-            expect(sun.isValidDate(year, 5.5, day)).toBeFalse();
-        });
-
-        it('Invalid day', () => {
-            expect(sun.isValidDate(year, month, 1.5)).toBeFalse();
-        });
-
-        it('Invalid leap year month days', () => {
-            expect(sun.isValidDate(year, month, 29)).toBeFalse();
-        });
-
-        it('Valid leap year month days', () => {
-            expect(sun.isValidDate(2000, month, 29));
-        });
-
-    });
-
-    describe('getDayOfYear()', () => {
-
-        it('Invalid date', () => {
-            try {
-                sun.getDayOfYear(202.5, 5, 1);
-                throw 'Allowed an invalid date';
-            } catch (err) {
-                expect(err).toEqual('Invalid date');
-            }
-        });
-
-        it('Returns day of year', () => {
-            let year = 2022;
-            let month = 5;
+            let month = 2;
             let day = 1;
-            let expected = (() => {
-                let n1 = Math.floor(275 * month / 9);
-                let n2 = Math.floor((month + 9) / 12);
-                let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
-                let n = n1 - (n2 * n3) + day -30;
-                return n;
-            })();
-            let response = sun.getDayOfYear(year, month, day);
-            expect(response).toEqual(expected);
+    
+            it('Invalid year', () => {
+                expect(sun.timeLib.isValidDate(20.5, month, day)).toBeFalse();
+            });
+    
+            it('Invalid month', () => {
+                expect(sun.timeLib.isValidDate(year, 5.5, day)).toBeFalse();
+            });
+    
+            it('Invalid day', () => {
+                expect(sun.timeLib.isValidDate(year, month, 1.5)).toBeFalse();
+            });
+    
+            it('Invalid leap year month days', () => {
+                expect(sun.timeLib.isValidDate(year, month, 29)).toBeFalse();
+            });
+    
+            it('Valid leap year month days', () => {
+                expect(sun.timeLib.isValidDate(2000, month, 29));
+            });
+    
+        });
+
+        describe('getDayOfYear()', () => {
+
+            it('Invalid date', () => {
+                try {
+                    sun.timeLib.getDayOfYear(202.5, 5, 1);
+                    throw 'Allowed an invalid date';
+                } catch (err) {
+                    expect(err).toEqual('Invalid date');
+                }
+            });
+    
+            it('Returns day of year', () => {
+                let year = 2022;
+                let month = 5;
+                let day = 1;
+                let expected = (() => {
+                    let n1 = Math.floor(275 * month / 9);
+                    let n2 = Math.floor((month + 9) / 12);
+                    let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
+                    let n = n1 - (n2 * n3) + day -30;
+                    return n;
+                })();
+                let response = sun.timeLib.getDayOfYear(year, month, day);
+                expect(response).toEqual(expected);
+            });
+    
+        });
+
+        describe('toUTC()', () => {
+
+            it('Undefined time parameter', () => {
+                try {
+                    sun.timeLib.toUTC();
+                    throw 'Allowed an undefined time parameter';
+                } catch (err) {
+                    expect(err).toEqual('Invalid time');
+                }
+            });
+    
+            it('Invalid time parameter data type', () => {
+                try {
+                    sun.timeLib.toUTC('foobar');
+                    throw 'Allowed an invalid time parameter data type';
+                } catch (err) {
+                    expect(err).toEqual('Invalid time');
+                }
+            });
+    
+            it('Undefined offset parameter', () => {
+                try {
+                    sun.timeLib.toUTC(5);
+                    throw 'Allowed an undefined offset parameter';
+                } catch (err) {
+                    expect(err).toEqual('Invalid offset');
+                }
+            });
+    
+            it('Invalid offset parameter', () => {
+                try {
+                    sun.timeLib.toUTC(5, 'foobar');
+                    throw 'Allowed an invalid offset parameter data type';
+                } catch (err) {
+                    expect(err).toEqual('Invalid offset');
+                }
+            });
+    
+            it('Checking UTC conversion', () => {
+                let time = 5;
+                let offset = -2;
+                let utc = time - offset;
+                let response = sun.timeLib.toUTC(time, offset);
+                expect(response).toEqual(utc);
+            });
+    
         });
 
     });
@@ -278,18 +329,18 @@ describe('sun', () => {
     describe('isValidDayOfYear()', () => {
 
         it('Undefined day parameter', () => {
-            expect(sun.isValidDayOfYear()).toBeFalse();
-            expect(sun.isValidDayOfYear(undefined)).toBeFalse();
+            expect(sun.timeLib.isValidDayOfYear()).toBeFalse();
+            expect(sun.timeLib.isValidDayOfYear(undefined)).toBeFalse();
         });
 
         it('Day must be greater than 0', () => {
-            expect(sun.isValidDayOfYear(0)).toBeFalse();
-            expect(sun.isValidDayOfYear(1)).toBeTrue();
+            expect(sun.timeLib.isValidDayOfYear(0)).toBeFalse();
+            expect(sun.timeLib.isValidDayOfYear(1)).toBeTrue();
         });
 
         it('Day must be less than 366 (including leap year)', () => {
-            expect(sun.isValidDayOfYear(367)).toBeFalse();
-            expect(sun.isValidDayOfYear(366)).toBeTrue();
+            expect(sun.timeLib.isValidDayOfYear(367)).toBeFalse();
+            expect(sun.timeLib.isValidDayOfYear(366)).toBeTrue();
         });
 
     });
@@ -317,7 +368,7 @@ describe('sun', () => {
         
         it('Checking Rising Time', () => {
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let utcOffset = sun.getLonUTCOffset(lon);
             let expected = dayOfYear + ((6 - utcOffset) / 24);
             let response = sun.getRisingTime(lon, dayOfYear);
@@ -348,7 +399,7 @@ describe('sun', () => {
 
         it('Checking Setting Time', () => {
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let utcOffset = sun.getLonUTCOffset(lon);
             let expected = dayOfYear + ((18 - utcOffset) / 24);
             let response = sun.getSettingTime(lon, dayOfYear);
@@ -379,7 +430,7 @@ describe('sun', () => {
 
         it('Calculating Suns Mean Anomaly (Based on Rising Time)', () => {
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let time = sun.getRisingTime(lon, dayOfYear);
             let expected = (0.9856 * time) - 3.289;
             let response = sun.getSunsMeanAnomaly(time);
@@ -410,7 +461,7 @@ describe('sun', () => {
 
         it('Calculating the Suns True Longitude (Based on Rising Time)', () => {
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let time = sun.getRisingTime(lon, dayOfYear);
             let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
             let expected = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180.0) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180.0) * sunsMeanAnomaly)) + 282.634;
@@ -447,7 +498,7 @@ describe('sun', () => {
 
         it('Calculating Suns Right Ascension', () => {
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let time = sun.getRisingTime(lon, dayOfYear);
             let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
             let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
@@ -495,7 +546,7 @@ describe('sun', () => {
         it('Calculating Suns Local Hour', () => {
             let lat = 41;
             let lon = -78;
-            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let dayOfYear = sun.timeLib.getDayOfYear(2022, 5, 1);
             let time = sun.getRisingTime(lon, dayOfYear);
             let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
             let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
@@ -576,54 +627,6 @@ describe('sun', () => {
 
     });
 
-    describe('toUTC()', () => {
-
-        it('Undefined time parameter', () => {
-            try {
-                sun.toUTC();
-                throw 'Allowed an undefined time parameter';
-            } catch (err) {
-                expect(err).toEqual('Invalid time');
-            }
-        });
-
-        it('Invalid time parameter data type', () => {
-            try {
-                sun.toUTC('foobar');
-                throw 'Allowed an invalid time parameter data type';
-            } catch (err) {
-                expect(err).toEqual('Invalid time');
-            }
-        });
-
-        it('Undefined offset parameter', () => {
-            try {
-                sun.toUTC(5);
-                throw 'Allowed an undefined offset parameter';
-            } catch (err) {
-                expect(err).toEqual('Invalid offset');
-            }
-        });
-
-        it('Invalid offset parameter', () => {
-            try {
-                sun.toUTC(5, 'foobar');
-                throw 'Allowed an invalid offset parameter data type';
-            } catch (err) {
-                expect(err).toEqual('Invalid offset');
-            }
-        });
-
-        it('Checking UTC conversion', () => {
-            let time = 5;
-            let offset = -2;
-            let utc = time - offset;
-            let response = sun.toUTC(time, offset);
-            expect(response).toEqual(utc);
-        });
-
-    });
-
     describe('sunrise()', () => {
 
         let year = 2022;
@@ -688,7 +691,7 @@ describe('sun', () => {
         });
 
         it('Calculating Sunrise', () => {
-            let dayOfYear = sun.getDayOfYear(year, month, day);
+            let dayOfYear = sun.timeLib.getDayOfYear(year, month, day);
             let utcOffset = sun.getLonUTCOffset(lon);
             let risingTime = sun.getRisingTime(lon, dayOfYear);
             let sunsMeanAnomaly = sun.getSunsMeanAnomaly(risingTime);
@@ -697,7 +700,7 @@ describe('sun', () => {
             let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
             let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
             let localMeanTime = sun.getLocalMeanTime(hours, risingTime, sunsRightAscension);
-            let time = sun.toUTC(localMeanTime, utcOffset);
+            let time = sun.timeLib.toUTC(localMeanTime, utcOffset);
             let response = sun.sunrise(year, month, day, lat, lon);
             expect(response).toEqual(time);
         });
@@ -768,7 +771,7 @@ describe('sun', () => {
         });
 
         it('Calculating Sunset', () => {
-            let dayOfYear = sun.getDayOfYear(year, month, day);
+            let dayOfYear = sun.timeLib.getDayOfYear(year, month, day);
             let utcOffset = sun.getLonUTCOffset(lon);
             let settingTime = sun.getSettingTime(lon, dayOfYear);
             let sunsMeanAnomaly = sun.getSunsMeanAnomaly(settingTime);
@@ -777,7 +780,7 @@ describe('sun', () => {
             let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
             let hours = ((180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
             let localMeanTime = sun.getLocalMeanTime(hours, settingTime, sunsRightAscension);
-            let time = sun.toUTC(localMeanTime, utcOffset);
+            let time = sun.timeLib.toUTC(localMeanTime, utcOffset);
             let response = sun.sunset(year, month, day, lat, lon);
             expect(response).toEqual(time);
         });

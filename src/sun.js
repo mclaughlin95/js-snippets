@@ -3,28 +3,228 @@
 let sun = (() => {
 
     /**
-     * The number of days in each month of a common year
+     * An independent date time library designed to be nonreliant on JavaScripts built in
+     * Date object and any external node modules.
      * 
-     * Type: Private Variable
-     * 
-     * Resource: https://www.timeanddate.com/calendar/months/
+     * Type: Public Object
      * 
      * Author: Corey Lee McLaughlin
+     *  
      */
-     let monthDays = {
-        1: 31, // January
-        2: 28, // February
-        3: 31, // March
-        4: 30, // April
-        5: 31, // May
-        6: 30, // June
-        7: 31, // July
-        8: 31, // August
-        9: 30, // September
-        10: 31, // October
-        11: 30, // November
-        12: 31 // December
-    };
+    let timeLib = (() => {
+
+        /**
+         * The number of days in each month of a common year
+         * 
+         * Type: Private Variable
+         * 
+         * Resource: https://www.timeanddate.com/calendar/months/
+         * 
+         * Author: Corey Lee McLaughlin
+         */
+        let monthDays = {
+            1: 31, // January
+            2: 28, // February
+            3: 31, // March
+            4: 30, // April
+            5: 31, // May
+            6: 30, // June
+            7: 31, // July
+            8: 31, // August
+            9: 30, // September
+            10: 31, // October
+            11: 30, // November
+            12: 31 // December
+        };
+
+        /**
+         * Will provide the day of the year when given a specified date
+         * 
+         * Type: Public Function
+         * 
+         * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} year a four digit number representing the year
+         * @param {Number} month a one or two digit number representing a month
+         * @param {Number} day a one or two digit number representing the day
+         * @throws {String} will throw an error if supplied an invalid date
+         * @returns {Number} the day of the year
+         */
+        function getDayOfYear(year, month, day) {
+            if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+            let n1 = Math.floor(275 * month / 9);
+            let n2 = Math.floor((month + 9) / 12);
+            let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
+            return n1 - (n2 * n3) + day - 30;
+        }
+
+        /**
+         * Will return the number of days in a particular month while accounting for leap year
+         * 
+         * Type: Public Function
+         * 
+         * Resource: https://www.timeanddate.com/calendar/months/
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} month a one or two digit number representing a month
+         * @param {Number} year a four digit number representing the year
+         * @throws {String} will throw an error if supplied month is invalid
+         * @throws {String} will throw an error if supplied year is invalid
+         * @returns {Number} the number of days in the given month
+         */
+        function getMonthDays(month, year) {
+            if (!this.isValidMonth(month)) { throw 'Invalid month'; }
+            if (!this.isValidYear(year)) { throw 'Invalid year'; }
+            if (this.isLeapYear(year) && month == 2) { return monthDays[2] + 1; }
+            return monthDays[month];
+        }
+
+        /**
+         * Will determine whether the year is a leap year
+         * 
+         * Type: Public Function
+         * 
+         * Resource: https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} year a four digit number representing the year
+         * @throws will throw an error if year is not valid. See isValidYear() for more information
+         * @returns {Boolean}
+         */
+        function isLeapYear(year) {
+            if (!this.isValidYear(year)) { throw 'Invalid year'; }
+            return (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
+        }
+
+        /**
+         * Will determine whether the supplied date is valid, while accounting for leap year 
+         * 
+         * Type: Public Function
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} year a four digit number representing the year
+         * @param {Number} month a one or two digit number representing a month
+         * @param {Number} day a one or two digit number representing the day
+         * @returns {Boolean}
+         */
+        function isValidDate(year, month, day) {
+            if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) { return false; }
+            if (day > this.getMonthDays(month, year)) { return false; }
+            return true;
+        }   
+
+        /**
+         * Will determine whether the day is valid
+         * 
+         * Valid Days: A whole number ranging from 1 to 31
+         * 
+         * Type: Public Function
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} day a one or two digit number representing the day 
+         * @returns {Boolean}
+         */
+        function isValidDay(day) {
+            if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) { return true; }
+            return false;
+        }
+
+        /**
+         * Will determine whether the day of the year is valid
+         * 
+         * Valid Days: A whole number ranging from 1 to 366, which includes leap year
+         * 
+         * Type: Public Function
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} day the day of the year 
+         * @returns {Boolean}
+         */
+        function isValidDayOfYear(day) {
+            if (typeof day == 'number' && day > 0 && day < 367) { return true; }
+            return false;
+        }
+
+        /**
+         * Will determine whether the month is valid
+         * 
+         * Valid Months: A whole number ranging from 1 to 12
+         * 
+         * Type: Public Function
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} month a one or two digit number representing a month
+         * @returns {Boolean}
+         */
+         function isValidMonth(month) {
+            if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) { return true; }
+            return false;
+        }
+
+        /**
+         * Will determine whether the year is valid.
+         * 
+         * Valid Years: A whole number ranging from 1 to 9999
+         * 
+         * Type: Public Function
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} year a four digit number representing the year
+         * @returns {Boolean}
+         */
+        function isValidYear(year) {
+            if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) { return true; }
+            return false;
+        }
+
+        /**
+         * Will apply an offset to a given time
+         * 
+         * Step 9 of Resource Document
+         * 
+         * Type: Public Function
+         * 
+         * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+         * 
+         * Author: Corey Lee McLaughlin
+         * 
+         * @param {Number} time the local time 
+         * @param {Number} offset the local offset time
+         * @throws {String} will throw an error if time is invalid
+         * @throws {String} will throw an error if offset is invalid
+         * @returns {Number} The UTC time
+         */
+        function toUTC(time, offset) {
+            if (typeof time != 'number') { throw 'Invalid time'; }
+            if (typeof offset != 'number') { throw 'Invalid offset'; }
+            let utc = time - offset;
+            while (utc < 0) { utc += 24; }
+            while (utc >= 24) { utc -= 24; }
+            return utc;
+        }
+
+        return {
+            getDayOfYear: getDayOfYear,
+            getMonthDays: getMonthDays,
+            isLeapYear: isLeapYear,
+            isValidDate: isValidDate,
+            isValidDay: isValidDay,
+            isValidDayOfYear: isValidDayOfYear,
+            isValidMonth: isValidMonth,
+            isValidYear: isValidYear,
+            toUTC: toUTC
+        };
+
+    })();
 
     /**
      * A series of Sun's Zenith for sunrise/sunset
@@ -52,29 +252,6 @@ let sun = (() => {
      * Author: Corey Lee McLaughlin
      */
     let zenith = observedZeniths.official;
-
-    /**
-     * Will provide the day of the year when given a specified date
-     * 
-     * Type: Public Function
-     * 
-     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} year 
-     * @param {Number} month 
-     * @param {Number} day 
-     * @throws {String} will throw an error if supplied an invalid date
-     * @returns {Number} the day of the year
-     */
-    function getDayOfYear(year, month, day) {
-        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
-        let n1 = Math.floor(275 * month / 9);
-        let n2 = Math.floor((month + 9) / 12);
-        let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
-        return n1 - (n2 * n3) + day - 30;
-    }
 
     /**
      * Will calculate the local mean time for rising or setting
@@ -118,28 +295,6 @@ let sun = (() => {
     }
 
     /**
-     * Will return the number of days in a particular month while accounting for leap year
-     * 
-     * Type: Public Function
-     * 
-     * Resources: https://www.timeanddate.com/calendar/months/
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} month a one or two digit number representing a month
-     * @param {Number} year a four digit number representing the year
-     * @throws Will throw an error if supplied month is invalid
-     * @throws Will throw an error if supplied year is invalid
-     * @returns {Number} the number of days in the given month
-     */
-     function getMonthDays(month, year) {
-        if (!this.isValidMonth(month)) { throw 'Invalid month'; }
-        if (!this.isValidYear(year)) { throw 'Invalid year'; }
-        if (this.isLeapYear(year) && month == 2) { return monthDays[2] + 1; }
-        return monthDays[month];
-    }
-
-    /**
      * Will determine the rising local time for a given location and day
      * 
      * Step Two of Resource Document
@@ -156,7 +311,7 @@ let sun = (() => {
      */
     function getRisingTime(lon, dayOfYear) {
         let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
+        if (!this.timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((6 - utcOffset) / 24);
     }
 
@@ -177,7 +332,7 @@ let sun = (() => {
      */
     function getSettingTime(lon, dayOfYear) {
         let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
+        if (!this.timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((18 - utcOffset) / 24);
     }
 
@@ -273,76 +428,6 @@ let sun = (() => {
     }
 
     /**
-     * Will determine whether the year is a leap year
-     * 
-     * Type: Public Function
-     * 
-     * Resource: https://www.w3resource.com/javascript-exercises/javascript-basic-exercise-6.php
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} year a four digit number representing the year
-     * @throws Will throw an error if year is not valid. See isValidYear() for more information
-     * @returns {Boolean}
-     */
-     function isLeapYear(year) {
-        if (!this.isValidYear(year)) { throw 'Invalid year'; }
-        return (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
-    }
-
-    /**
-     * Will determine whether the supplied date is valid, while accounting for leap year 
-     * 
-     * Type: Public Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} year a four digit number representing the year
-     * @param {Number} month a one or two digit number representing a month
-     * @param {Number} day a one or two digit number representing the day
-     * @returns {Boolean}
-     */
-     function isValidDate(year, month, day) {
-        if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) { return false; }
-        if (day > this.getMonthDays(month, year)) { return false; }
-        return true;
-    }   
-
-    /**
-     * Will determine whether the day is valid
-     * 
-     * Valid Days: A whole number ranging from 1 to 31
-     * 
-     * Type: Public Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} day a one or two digit number representing the day 
-     * @returns {Boolean}
-     */
-     function isValidDay(day) {
-        if (typeof day == 'number' && day > 0 && day < 32 && day % 1 == 0) { return true; }
-        return false;
-    }
-
-    /**
-     * Will determine whether the day of the year is valid
-     * 
-     * Valid Days: A whole number ranging from 1 to 366, which includes leap year
-     * 
-     * Type: Public Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} day the day of the year 
-     * @returns {Boolean}
-     */
-    function isValidDayOfYear(day) {
-        if (typeof day == 'number' && day > 0 && day < 367) { return true; }
-        return false;
-    }
-
-    /**
      * Will determine whether the latitude is valid
      * 
      * EPSG:4326
@@ -382,39 +467,9 @@ let sun = (() => {
         return false;
     }
 
-    /**
-     * Will determine whether the month is valid
-     * 
-     * Valid Months: A whole number ranging from 1 to 12
-     * 
-     * Type: Public Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} month a one or two digit number representing a month
-     * @returns {Boolean}
-     */
-     function isValidMonth(month) {
-        if (typeof month == 'number' && month > 0 && month < 13 && month % 1 == 0) { return true; }
-        return false;
-    }
 
-    /**
-     * Will determine whether the year is valid.
-     * 
-     * Valid Years: A whole number ranging from 1 to 9999
-     * 
-     * Type: Public Function
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} year a four digit number representing the year
-     * @returns {Boolean}
-     */
-    function isValidYear(year) {
-        if (typeof year == 'number' && year > 0 && year < 10000 && year % 1 == 0) { return true; }
-        return false;
-    }
+
+
 
     /**
      * Will calculate the sunrise of a given time and location
@@ -436,16 +491,16 @@ let sun = (() => {
      * @returns {Number} the utc time of sunrise for the location
      */
     function sunrise(year, month, day, lat, lon) {
-        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!this.timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
         if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
         if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
-        let risingTime = this.getRisingTime(lon, this.getDayOfYear(year, month, day));
+        let risingTime = this.getRisingTime(lon, this.timeLib.getDayOfYear(year, month, day));
         let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(risingTime));
         let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
         let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
         let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
         let localMeanTime = this.getLocalMeanTime(hours, risingTime, sunsRightAscension);
-        return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
+        return this.timeLib.toUTC(localMeanTime, this.getLonUTCOffset(lon));
     }
 
     /**
@@ -468,66 +523,32 @@ let sun = (() => {
      * @returns {Number} the utc time of sunset for the location
      */
     function sunset(year, month, day, lat, lon) {
-        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!this.timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
         if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
         if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
-        let settingTime = this.getSettingTime(lon, this.getDayOfYear(year, month, day));
+        let settingTime = this.getSettingTime(lon, this.timeLib.getDayOfYear(year, month, day));
         let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(settingTime));
         let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
         let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
         let hours = ((180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
         let localMeanTime = this.getLocalMeanTime(hours, settingTime, sunsRightAscension);
-        return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
-    }
-
-    /**
-     * Will apply an offset to a given time
-     * 
-     * Step 9 of Resource Document
-     * 
-     * Type: Public Function
-     * 
-     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
-     * 
-     * Author: Corey Lee McLaughlin
-     * 
-     * @param {Number} time the local time 
-     * @param {Number} offset the local offset time
-     * @throws {String} Will throw an error if time is invalid
-     * @throws {String} Will throw an error if offset is invalid
-     * @returns {Number} The UTC time
-     */
-    function toUTC(time, offset) {
-        if (typeof time != 'number') { throw 'Invalid time'; }
-        if (typeof offset != 'number') { throw 'Invalid offset'; }
-        let utc = time - offset;
-        while (utc < 0) { utc += 24; }
-        while (utc >= 24) { utc -= 24; }
-        return utc;
+        return this.timeLib.toUTC(localMeanTime, this.getLonUTCOffset(lon));
     }
 
     return {
-        getDayOfYear: getDayOfYear,
         getLocalMeanTime: getLocalMeanTime,
         getLonUTCOffset: getLonUTCOffset,
-        getMonthDays: getMonthDays,
         getRisingTime: getRisingTime,
         getSettingTime: getSettingTime,
         getSunsLocalHourAngle: getSunsLocalHourAngle,
         getSunsMeanAnomaly: getSunsMeanAnomaly,
         getSunsRightAscension: getSunsRightAscension,
         getSunsTrueLon: getSunsTrueLon,
-        isLeapYear: isLeapYear,
-        isValidDate: isValidDate,
-        isValidDay: isValidDay,
-        isValidDayOfYear: isValidDayOfYear,
         isValidLat: isValidLat,
         isValidLon: isValidLon,
-        isValidMonth: isValidMonth,
-        isValidYear: isValidYear,
         sunrise: sunrise,
         sunset: sunset,
-        toUTC: toUTC,
+        timeLib: timeLib,
         zenith: zenith
     };
 
