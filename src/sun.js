@@ -498,6 +498,25 @@ let sun = (() => {
         return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
     }
 
+    /**
+     * Will calculate the sunset of a given time and location
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @param {Number} month a one or two digit number representing a month
+     * @param {Number} day a one or two digit number representing the day
+     * @param {Number} lat the latitude coordinate
+     * @param {Number} lon the longitude coordinate 
+     * @throws {String} will throw an error if invalid supplied in an invalid date such as year, month, day or invalid leap year
+     * @throws {String} will throw an error if invalid latitude coordinate
+     * @throws {String} will throw an error if invalid longitude coordinate
+     * @returns {Number} the utc time of sunset for the location
+     */
     function sunset(year, month, day, lat, lon) {
         if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
         if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
