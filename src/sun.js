@@ -1,7 +1,7 @@
 // Resources
 // https://www.edwilliams.org/sunrise_sunset_algorithm.htm
 
-let sunrise = (() => {
+let sun = (() => {
 
     /**
      * The number of days in each month of a common year
@@ -227,7 +227,7 @@ let sunrise = (() => {
         }
         let sinDeclination = 0.39782 * Math.sin((Math.PI / 180.0) * sunsTrueLon);
         let cosDeclination = Math.cos(Math.asin(sinDeclination));
-        return (Math.cos((Math.PI / 180.0) * sunrise.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
+        return (Math.cos((Math.PI / 180.0) * this.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
     }
 
     /**
@@ -321,19 +321,7 @@ let sunrise = (() => {
         if (!this.isValidYear(year)) {
             throw 'Invalid year';
         }
-        if (year % 4 == 0) {
-            if (year % 100 == 0) {
-                if (year % 400 == 0) {
-                    return true
-                } else {
-                    return false;
-                }
-            } else {
-                return true;
-            }
-        } else {
-            return false;
-        }
+        return (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
     }
 
     /**
@@ -430,7 +418,7 @@ let sunrise = (() => {
      * 
      * Author: Corey Lee McLaughlin
      * 
-     * @param {Number} lon the longitude cordinate 
+     * @param {Number} lon the longitude coordinate 
      * @returns {Boolean}
      */
     function isValidLon(lon) {
@@ -478,8 +466,36 @@ let sunrise = (() => {
         return false;
     }
 
-    function sunset() {
-        
+    /**
+     * Will calculate the sunrise of a given time and location
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} year a four digit number representing the year
+     * @param {Number} month a one or two digit number representing a month
+     * @param {Number} day a one or two digit number representing the day
+     * @param {Number} lat the latitude coordinate
+     * @param {Number} lon the longitude coordinate 
+     * @throws {String} will throw an error if invalid supplied in an invalid date such as year, month, day or invalid leap year
+     * @throws {String} will throw an error if invalid latitude coordinate
+     * @throws {String} will throw an error if invalid longitude coordinate
+     * @returns {Number} the utc time of sunrise for the location
+     */
+    function sunrise(year, month, day, lat, lon) {
+        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
+        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
+        let risingTime = this.getRisingTime(lon, this.getDayOfYear(year, month, day));
+        let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(risingTime));
+        let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
+        let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
+        let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
+        let localMeanTime = this.getLocalMeanTime(hours, risingTime, sunsRightAscension);
+        return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
     }
 
     /**
@@ -528,13 +544,14 @@ let sunrise = (() => {
         isValidLon: isValidLon,
         isValidMonth: isValidMonth,
         isValidYear: isValidYear,
+        sunrise: sunrise,
         toUTC: toUTC,
         zenith: zenith
     };
 
 })();
 
-export default sunrise;
+export default sun;
 
 
 // Return is in UTC Time!!!

@@ -1,56 +1,29 @@
-import sunrise from '../src/sunrise.js';
-import { calculateSunrise } from '../src/sunrise.js';
+import sun from '../src/sun.js';
+import { calculateSunrise } from '../src/sun.js';
 
-describe('sunrise()', () => {
-
-    // it('Test A', () => {
-    //     let year = '2022';
-    //     let month = '04';
-    //     let day = '29';
-    //     let date = year + month + day;
-    //     let lon = '-78';
-    //     let lat = '41';
-    
-    //     let data = calculateSunrise(date, lon, lat);
-
-    //     // Sunrise Conversion
-    //     let sunriseDecimalHour = convertHour(data.rise);
-    //     let sunriseUTC = Date.UTC(
-    //         parseInt(year), 
-    //         parseInt(month), 
-    //         parseInt(day), 
-    //         parseInt(sunriseDecimalHour.split(':')[0]), 
-    //         parseInt(sunriseDecimalHour.split(':')[1]), 
-    //         0, 
-    //         0
-    //     );
-    //     let sunrise = new Date(sunriseUTC).toLocaleString();
-    //     console.log(sunrise);
-
-    //     expect(true).toEqual(true);
-    // });
+describe('sun', () => {
 
     describe('isValidYear()', () => {
 
         it('Undefined year', () => {
-            expect(sunrise.isValidYear()).toBeFalse();
-            expect(sunrise.isValidYear(undefined)).toBeFalse();
+            expect(sun.isValidYear()).toBeFalse();
+            expect(sun.isValidYear(undefined)).toBeFalse();
         });
 
         it('Year is number data type', () => {
-            expect(sunrise.isValidYear(2022)).toBeTrue();
+            expect(sun.isValidYear(2022)).toBeTrue();
         });
 
         it('Year is greater than 0', () => {
-            expect(sunrise.isValidYear(0)).toBeFalse();
+            expect(sun.isValidYear(0)).toBeFalse();
         });
 
         it('Year is four digits', () => {
-            expect(sunrise.isValidYear(10000)).toBeFalse();
+            expect(sun.isValidYear(10000)).toBeFalse();
         });
 
         it('Year is a whole number', () => {
-            expect(sunrise.isValidYear(25.5)).toBeFalse();
+            expect(sun.isValidYear(25.5)).toBeFalse();
         });
 
     });
@@ -58,24 +31,24 @@ describe('sunrise()', () => {
     describe('isValidMonth()', () => {
 
         it('Undefined month parameter', () => {
-            expect(sunrise.isValidMonth()).toBeFalse();
-            expect(sunrise.isValidMonth(undefined)).toBeFalse();
+            expect(sun.isValidMonth()).toBeFalse();
+            expect(sun.isValidMonth(undefined)).toBeFalse();
         });
 
         it('Month number data type', () => {
-            expect(sunrise.isValidMonth(5)).toBeTrue();
+            expect(sun.isValidMonth(5)).toBeTrue();
         });
 
         it('Month is greater than 0', () => {
-            expect(sunrise.isValidMonth(0)).toBeFalse();
+            expect(sun.isValidMonth(0)).toBeFalse();
         });
 
         it('Month is less than or equal to 12', () => {
-            expect(sunrise.isValidMonth(13)).toBeFalse();
+            expect(sun.isValidMonth(13)).toBeFalse();
         });
 
         it('Month is a whole number', () => {
-            expect(sunrise.isValidMonth(2.5)).toBeFalse();
+            expect(sun.isValidMonth(2.5)).toBeFalse();
         });
 
     });
@@ -83,24 +56,24 @@ describe('sunrise()', () => {
     describe('isValidDay()', () => {
 
         it('Undefined day parameter', () => {
-            expect(sunrise.isValidDay()).toBeFalse();
-            expect(sunrise.isValidDay(undefined)).toBeFalse();
+            expect(sun.isValidDay()).toBeFalse();
+            expect(sun.isValidDay(undefined)).toBeFalse();
         });
 
         it('Day number data type', () => {
-            expect(sunrise.isValidDay(1)).toBeTrue();
+            expect(sun.isValidDay(1)).toBeTrue();
         });
 
         it('Day is greater than 0', () => {
-            expect(sunrise.isValidDay(0)).toBeFalse();
+            expect(sun.isValidDay(0)).toBeFalse();
         });
 
         it('Day is less than or equal to 31', () => {
-            expect(sunrise.isValidDay(32)).toBeFalse();
+            expect(sun.isValidDay(32)).toBeFalse();
         });
 
         it('Day is a whole number', () => {
-            expect(sunrise.isValidDay(1.5)).toBeFalse();
+            expect(sun.isValidDay(1.5)).toBeFalse();
         });
 
     });
@@ -109,7 +82,7 @@ describe('sunrise()', () => {
 
         it('Valid year', () => {
             try {
-                sunrise.isLeapYear('foobar');
+                sun.isLeapYear('foobar');
                 throw 'Allowed an invalid year';
             } catch (err) {
                 expect(err).toEqual('Invalid year');
@@ -117,19 +90,19 @@ describe('sunrise()', () => {
         });
 
         it('Non leap year', () => {
-            expect(sunrise.isLeapYear(2022)).toBeFalse();
+            expect(sun.isLeapYear(2022)).toBeFalse();
         });
 
         it('Leap year divisable by 4', () => {
-            expect(sunrise.isLeapYear(2016)).toBeTrue();
+            expect(sun.isLeapYear(2016)).toBeTrue();
         });
 
         it('Leap year is not divisable by 100', () => {
-            expect(sunrise.isLeapYear(2022)).toBeFalse();
+            expect(sun.isLeapYear(2022)).toBeFalse();
         });
 
         it('Leap year is divisable by 400', () => {
-            expect(sunrise.isLeapYear(2000)).toBeTrue();
+            expect(sun.isLeapYear(2000)).toBeTrue();
         });
 
     });
@@ -138,7 +111,7 @@ describe('sunrise()', () => {
 
         it('Invalid month', () => {
             try {
-                sunrise.getMonthDays(5.5);
+                sun.getMonthDays(5.5);
                 throw 'Allowed invalid month';
             } catch (err) {
                 expect(err).toEqual('Invalid month');
@@ -147,7 +120,7 @@ describe('sunrise()', () => {
 
         it('Invalid year', () => {
             try {
-                sunrise.getMonthDays(5, 2022.5);
+                sun.getMonthDays(5, 2022.5);
                 throw 'Allowed invalid year';
             } catch (err) {
                 expect(err).toEqual('Invalid year');
@@ -156,34 +129,34 @@ describe('sunrise()', () => {
 
         it('Nonleap Year Months Days', () => {
             let year = 2022;
-            expect(sunrise.getMonthDays(1, year)).toEqual(31); // January
-            expect(sunrise.getMonthDays(2, year)).toEqual(28); // February
-            expect(sunrise.getMonthDays(3, year)).toEqual(31); // March
-            expect(sunrise.getMonthDays(4, year)).toEqual(30); // April
-            expect(sunrise.getMonthDays(5, year)).toEqual(31); // May
-            expect(sunrise.getMonthDays(6, year)).toEqual(30); // June
-            expect(sunrise.getMonthDays(7, year)).toEqual(31); // July
-            expect(sunrise.getMonthDays(8, year)).toEqual(31); // August
-            expect(sunrise.getMonthDays(9, year)).toEqual(30); // September
-            expect(sunrise.getMonthDays(10, year)).toEqual(31); // October
-            expect(sunrise.getMonthDays(11, year)).toEqual(30); // November
-            expect(sunrise.getMonthDays(12, year)).toEqual(31); // December
+            expect(sun.getMonthDays(1, year)).toEqual(31); // January
+            expect(sun.getMonthDays(2, year)).toEqual(28); // February
+            expect(sun.getMonthDays(3, year)).toEqual(31); // March
+            expect(sun.getMonthDays(4, year)).toEqual(30); // April
+            expect(sun.getMonthDays(5, year)).toEqual(31); // May
+            expect(sun.getMonthDays(6, year)).toEqual(30); // June
+            expect(sun.getMonthDays(7, year)).toEqual(31); // July
+            expect(sun.getMonthDays(8, year)).toEqual(31); // August
+            expect(sun.getMonthDays(9, year)).toEqual(30); // September
+            expect(sun.getMonthDays(10, year)).toEqual(31); // October
+            expect(sun.getMonthDays(11, year)).toEqual(30); // November
+            expect(sun.getMonthDays(12, year)).toEqual(31); // December
         });
 
         it('Leap Year Months Days', () => {
             let year = 2000;
-            expect(sunrise.getMonthDays(1, year)).toEqual(31); // January
-            expect(sunrise.getMonthDays(2, year)).toEqual(29); // February
-            expect(sunrise.getMonthDays(3, year)).toEqual(31); // March
-            expect(sunrise.getMonthDays(4, year)).toEqual(30); // April
-            expect(sunrise.getMonthDays(5, year)).toEqual(31); // May
-            expect(sunrise.getMonthDays(6, year)).toEqual(30); // June
-            expect(sunrise.getMonthDays(7, year)).toEqual(31); // July
-            expect(sunrise.getMonthDays(8, year)).toEqual(31); // August
-            expect(sunrise.getMonthDays(9, year)).toEqual(30); // September
-            expect(sunrise.getMonthDays(10, year)).toEqual(31); // October
-            expect(sunrise.getMonthDays(11, year)).toEqual(30); // November
-            expect(sunrise.getMonthDays(12, year)).toEqual(31); // December
+            expect(sun.getMonthDays(1, year)).toEqual(31); // January
+            expect(sun.getMonthDays(2, year)).toEqual(29); // February
+            expect(sun.getMonthDays(3, year)).toEqual(31); // March
+            expect(sun.getMonthDays(4, year)).toEqual(30); // April
+            expect(sun.getMonthDays(5, year)).toEqual(31); // May
+            expect(sun.getMonthDays(6, year)).toEqual(30); // June
+            expect(sun.getMonthDays(7, year)).toEqual(31); // July
+            expect(sun.getMonthDays(8, year)).toEqual(31); // August
+            expect(sun.getMonthDays(9, year)).toEqual(30); // September
+            expect(sun.getMonthDays(10, year)).toEqual(31); // October
+            expect(sun.getMonthDays(11, year)).toEqual(30); // November
+            expect(sun.getMonthDays(12, year)).toEqual(31); // December
         });
 
     });
@@ -195,23 +168,23 @@ describe('sunrise()', () => {
         let day = 1;
 
         it('Invalid year', () => {
-            expect(sunrise.isValidDate(20.5, month, day)).toBeFalse();
+            expect(sun.isValidDate(20.5, month, day)).toBeFalse();
         });
 
         it('Invalid month', () => {
-            expect(sunrise.isValidDate(year, 5.5, day)).toBeFalse();
+            expect(sun.isValidDate(year, 5.5, day)).toBeFalse();
         });
 
         it('Invalid day', () => {
-            expect(sunrise.isValidDate(year, month, 1.5)).toBeFalse();
+            expect(sun.isValidDate(year, month, 1.5)).toBeFalse();
         });
 
         it('Invalid leap year month days', () => {
-            expect(sunrise.isValidDate(year, month, 29)).toBeFalse();
+            expect(sun.isValidDate(year, month, 29)).toBeFalse();
         });
 
         it('Valid leap year month days', () => {
-            expect(sunrise.isValidDate(2000, month, 29));
+            expect(sun.isValidDate(2000, month, 29));
         });
 
     });
@@ -220,7 +193,7 @@ describe('sunrise()', () => {
 
         it('Invalid date', () => {
             try {
-                sunrise.getDayOfYear(202.5, 5, 1);
+                sun.getDayOfYear(202.5, 5, 1);
                 throw 'Allowed an invalid date';
             } catch (err) {
                 expect(err).toEqual('Invalid date');
@@ -238,7 +211,7 @@ describe('sunrise()', () => {
                 let n = n1 - (n2 * n3) + day -30;
                 return n;
             })();
-            let response = sunrise.getDayOfYear(year, month, day);
+            let response = sun.getDayOfYear(year, month, day);
             expect(response).toEqual(expected);
         });
 
@@ -247,18 +220,18 @@ describe('sunrise()', () => {
     describe('isValidLon()', () => {
 
         it('Undefined lon parameter', () => {
-            expect(sunrise.isValidLon()).toBeFalse();
-            expect(sunrise.isValidLon(undefined)).toBeFalse();
+            expect(sun.isValidLon()).toBeFalse();
+            expect(sun.isValidLon(undefined)).toBeFalse();
         });
 
         it('Invalid negative lon', () => {
-            expect(sunrise.isValidLon(-181)).toBeFalse();
-            expect(sunrise.isValidLon(-180)).toBeTrue();
+            expect(sun.isValidLon(-181)).toBeFalse();
+            expect(sun.isValidLon(-180)).toBeTrue();
         });
 
         it('Invalid positive lon', () => {
-            expect(sunrise.isValidLon(181)).toBeFalse();
-            expect(sunrise.isValidLon(180)).toBeTrue();
+            expect(sun.isValidLon(181)).toBeFalse();
+            expect(sun.isValidLon(180)).toBeTrue();
         });
 
     });
@@ -266,18 +239,18 @@ describe('sunrise()', () => {
     describe('isValidLat()', () => {
 
         it('Undefined lat parameter', () => {
-            expect(sunrise.isValidLat()).toBeFalse();
-            expect(sunrise.isValidLat(undefined)).toBeFalse();
+            expect(sun.isValidLat()).toBeFalse();
+            expect(sun.isValidLat(undefined)).toBeFalse();
         });
 
         it('Invalid negative lat', () => {
-            expect(sunrise.isValidLat(-91)).toBeFalse();
-            expect(sunrise.isValidLat(-90)).toBeTrue();
+            expect(sun.isValidLat(-91)).toBeFalse();
+            expect(sun.isValidLat(-90)).toBeTrue();
         });
 
         it('Invalid postive lat', () => {
-            expect(sunrise.isValidLat(91)).toBeFalse();
-            expect(sunrise.isValidLat(90)).toBeTrue();
+            expect(sun.isValidLat(91)).toBeFalse();
+            expect(sun.isValidLat(90)).toBeTrue();
         });
 
     });
@@ -286,7 +259,7 @@ describe('sunrise()', () => {
 
         it('Invalid lon parameter', () => {
             try {
-                sunrise.getLonUTCOffset(-800);
+                sun.getLonUTCOffset(-800);
                 throw 'Allowed invalid lon parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid lon');
@@ -296,7 +269,7 @@ describe('sunrise()', () => {
         it('Returns expected lon hour', () => {
             let lon = -78;
             let expected = lon / 15;
-            let response = sunrise.getLonUTCOffset(lon);
+            let response = sun.getLonUTCOffset(lon);
             expect(response).toEqual(expected);
         });
 
@@ -305,18 +278,18 @@ describe('sunrise()', () => {
     describe('isValidDayOfYear()', () => {
 
         it('Undefined day parameter', () => {
-            expect(sunrise.isValidDayOfYear()).toBeFalse();
-            expect(sunrise.isValidDayOfYear(undefined)).toBeFalse();
+            expect(sun.isValidDayOfYear()).toBeFalse();
+            expect(sun.isValidDayOfYear(undefined)).toBeFalse();
         });
 
         it('Day must be greater than 0', () => {
-            expect(sunrise.isValidDayOfYear(0)).toBeFalse();
-            expect(sunrise.isValidDayOfYear(1)).toBeTrue();
+            expect(sun.isValidDayOfYear(0)).toBeFalse();
+            expect(sun.isValidDayOfYear(1)).toBeTrue();
         });
 
         it('Day must be less than 366 (including leap year)', () => {
-            expect(sunrise.isValidDayOfYear(367)).toBeFalse();
-            expect(sunrise.isValidDayOfYear(366)).toBeTrue();
+            expect(sun.isValidDayOfYear(367)).toBeFalse();
+            expect(sun.isValidDayOfYear(366)).toBeTrue();
         });
 
     });
@@ -326,7 +299,7 @@ describe('sunrise()', () => {
 
         it('Invalid lon parameter', () => {
             try {
-                sunrise.getRisingTime('foobar');
+                sun.getRisingTime('foobar');
                 throw 'Allowed an invalid lon parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid lon');
@@ -335,7 +308,7 @@ describe('sunrise()', () => {
 
         it('Invalid dayOfYear parameter', () => {
             try {
-                sunrise.getRisingTime(-78, 'foobar');
+                sun.getRisingTime(-78, 'foobar');
                 throw 'Allowed an invalid dayOfYear parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid dayOfYear');
@@ -344,10 +317,10 @@ describe('sunrise()', () => {
         
         it('Checking Rising Time', () => {
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let utcOffset = sunrise.getLonUTCOffset(lon);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let utcOffset = sun.getLonUTCOffset(lon);
             let expected = dayOfYear + ((6 - utcOffset) / 24);
-            let response = sunrise.getRisingTime(lon, dayOfYear);
+            let response = sun.getRisingTime(lon, dayOfYear);
             expect(response).toEqual(expected);
         });
 
@@ -357,7 +330,7 @@ describe('sunrise()', () => {
 
         it('Invalid lon parameter', () => {
             try {
-                sunrise.getSettingTime('foobar');
+                sun.getSettingTime('foobar');
                 throw 'Allowed an invalid lon parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid lon');
@@ -366,7 +339,7 @@ describe('sunrise()', () => {
 
         it('Invalid dayOfYear parameter', () => {
             try {
-                sunrise.getSettingTime(-78, 'foobar');
+                sun.getSettingTime(-78, 'foobar');
                 throw 'Allowed an invalid dayOfYear parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid dayOfYear');
@@ -375,10 +348,10 @@ describe('sunrise()', () => {
 
         it('Checking Setting Time', () => {
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let utcOffset = sunrise.getLonUTCOffset(lon);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let utcOffset = sun.getLonUTCOffset(lon);
             let expected = dayOfYear + ((18 - utcOffset) / 24);
-            let response = sunrise.getSettingTime(lon, dayOfYear);
+            let response = sun.getSettingTime(lon, dayOfYear);
             expect(response).toEqual(expected);
         });
 
@@ -388,7 +361,7 @@ describe('sunrise()', () => {
 
         it('Undefined time parameter', () => {
             try {
-                sunrise.getSunsMeanAnomaly();
+                sun.getSunsMeanAnomaly();
                 throw 'Allowed undefined time parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -397,7 +370,7 @@ describe('sunrise()', () => {
 
         it('Invalid time parameter data type', () => {
             try {
-                sunrise.getSunsMeanAnomaly('foobar');
+                sun.getSunsMeanAnomaly('foobar');
                 throw 'Allowed invalid time parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -406,10 +379,10 @@ describe('sunrise()', () => {
 
         it('Calculating Suns Mean Anomaly (Based on Rising Time)', () => {
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let time = sunrise.getRisingTime(lon, dayOfYear);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let time = sun.getRisingTime(lon, dayOfYear);
             let expected = (0.9856 * time) - 3.289;
-            let response = sunrise.getSunsMeanAnomaly(time);
+            let response = sun.getSunsMeanAnomaly(time);
             expect(response).toEqual(expected);
         });
 
@@ -419,7 +392,7 @@ describe('sunrise()', () => {
 
         it('Undefined sunsMeanAnomaly parameter', () => {
             try {
-                sunrise.getSunsTrueLon();
+                sun.getSunsTrueLon();
                 throw 'Allowed undefined sunsMeanAnomaly parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsMeanAnomaly');
@@ -428,7 +401,7 @@ describe('sunrise()', () => {
 
         it('Invalid sunsMeanAnomaly parameter data type', () => {
             try {
-                sunrise.getSunsTrueLon('foobar');
+                sun.getSunsTrueLon('foobar');
                 throw 'Allowed invalid sunsMeanAnomaly parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsMeanAnomaly');
@@ -437,16 +410,16 @@ describe('sunrise()', () => {
 
         it('Calculating the Suns True Longitude (Based on Rising Time)', () => {
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let time = sunrise.getRisingTime(lon, dayOfYear);
-            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let time = sun.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
             let expected = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180.0) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180.0) * sunsMeanAnomaly)) + 282.634;
             if (expected < 0.0) {
                 expected += 360.0;
             } else if (expected >= 360.0) {
                 expected -= 360.0;
             }
-            let response = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let response = sun.getSunsTrueLon(sunsMeanAnomaly);
             expect(response).toEqual(expected);
         });
 
@@ -456,7 +429,7 @@ describe('sunrise()', () => {
 
         it('Undefined sunsTrueLon', () => {
             try {
-                sunrise.getSunsRightAscension();
+                sun.getSunsRightAscension();
                 throw 'Allowed an undefined sunsTrueLon parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsTrueLon');
@@ -465,7 +438,7 @@ describe('sunrise()', () => {
 
         it('Invalid sunsTrueLon parameter data type', () => {
             try {
-                sunrise.getSunsRightAscension('foobar');
+                sun.getSunsRightAscension('foobar');
                 throw 'Allowed an invalid sunsTrueLon parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsTrueLon');
@@ -474,17 +447,17 @@ describe('sunrise()', () => {
 
         it('Calculating Suns Right Ascension', () => {
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let time = sunrise.getRisingTime(lon, dayOfYear);
-            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
-            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let time = sun.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
+            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
             let rightAscension = (180.0 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180.0) * sunsTrueLon));
             let lquadrant = (Math.floor(sunsTrueLon / 90.0)) * 90.0;
             let raquadrant = (Math.floor(rightAscension / 90.0)) * 90.0;
             rightAscension = rightAscension + (lquadrant - raquadrant);
             rightAscension /= 15.0;
             let expected = rightAscension;
-            let response = sunrise.getSunsRightAscension(sunsTrueLon);
+            let response = sun.getSunsRightAscension(sunsTrueLon);
             expect(response).toEqual(expected);
         });
 
@@ -494,7 +467,7 @@ describe('sunrise()', () => {
 
         it('Undefined sunsTrueLon parameter', () => {
             try {
-                sunrise.getSunsLocalHourAngle();
+                sun.getSunsLocalHourAngle();
                 throw 'Allowed an undefined sunsTrueLon parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsTrueLon');
@@ -503,7 +476,7 @@ describe('sunrise()', () => {
 
         it('Invalid sunsTrueLon parameter data type', () => {
             try {
-                sunrise.getSunsLocalHourAngle('foobar');
+                sun.getSunsLocalHourAngle('foobar');
                 throw 'Allowed an invalid sunsTrueLon parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid sunsTrueLon');
@@ -512,7 +485,7 @@ describe('sunrise()', () => {
 
         it('Invalid lat parameter', () => {
             try {
-                sunrise.getSunsLocalHourAngle(5, 'foobar');
+                sun.getSunsLocalHourAngle(5, 'foobar');
                 throw 'Allowed an invalid lat parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid lat');
@@ -522,15 +495,15 @@ describe('sunrise()', () => {
         it('Calculating Suns Local Hour', () => {
             let lat = 41;
             let lon = -78;
-            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
-            let time = sunrise.getRisingTime(lon, dayOfYear);
-            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
-            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let dayOfYear = sun.getDayOfYear(2022, 5, 1);
+            let time = sun.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(time);
+            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
             let sinDeclination = 0.39782 * Math.sin((Math.PI / 180.0) * sunsTrueLon);
             let cosDeclination = Math.cos(Math.asin(sinDeclination));
-            let cosHour = (Math.cos((Math.PI / 180.0) * sunrise.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
+            let cosHour = (Math.cos((Math.PI / 180.0) * sun.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
             let expected = cosHour;
-            let response = sunrise.getSunsLocalHourAngle(sunsTrueLon, lat);
+            let response = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
             expect(response).toEqual(expected);
         });
 
@@ -540,7 +513,7 @@ describe('sunrise()', () => {
 
         it('Undefined hours parameter', () => {
             try {
-                sunrise.getLocalMeanTime();
+                sun.getLocalMeanTime();
                 throw 'Allowed an undefined hours parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid hours');
@@ -549,7 +522,7 @@ describe('sunrise()', () => {
 
         it('Invalid hours parameter data type', () => {
             try {
-                sunrise.getLocalMeanTime('foobar');
+                sun.getLocalMeanTime('foobar');
                 throw 'Allowed an invalid hours parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid hours');
@@ -558,7 +531,7 @@ describe('sunrise()', () => {
 
         it('Undefined time parameter', () => {
             try {
-                sunrise.getLocalMeanTime(5);
+                sun.getLocalMeanTime(5);
                 throw 'Allowed an undefined time parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -567,7 +540,7 @@ describe('sunrise()', () => {
 
         it('Invalid time parameter data type', () => {
             try {
-                sunrise.getLocalMeanTime(5, 'foobar');
+                sun.getLocalMeanTime(5, 'foobar');
                 throw 'Allowed an invalid time parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -576,7 +549,7 @@ describe('sunrise()', () => {
 
         it('Undefined rightAscenstion parameter', () => {
             try {
-                sunrise.getLocalMeanTime(5, 5);
+                sun.getLocalMeanTime(5, 5);
                 throw 'Allowed an undefined rightAscension parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid rightAscension');
@@ -585,7 +558,7 @@ describe('sunrise()', () => {
 
         it('Invalid rightAscension parameter', () => {
             try {
-                sunrise.getLocalMeanTime(5, 5, 'foobar');
+                sun.getLocalMeanTime(5, 5, 'foobar');
                 throw 'Allowed an invalid rightAscension parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid rightAscension');
@@ -597,7 +570,7 @@ describe('sunrise()', () => {
             let time = 5;
             let rightAscension = 0.5;
             let expected = hours + rightAscension - (0.06571 * time) - 6.622;
-            let response = sunrise.getLocalMeanTime(hours, time, rightAscension);
+            let response = sun.getLocalMeanTime(hours, time, rightAscension);
             expect(response).toEqual(expected);
         });
 
@@ -607,7 +580,7 @@ describe('sunrise()', () => {
 
         it('Undefined time parameter', () => {
             try {
-                sunrise.toUTC();
+                sun.toUTC();
                 throw 'Allowed an undefined time parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -616,7 +589,7 @@ describe('sunrise()', () => {
 
         it('Invalid time parameter data type', () => {
             try {
-                sunrise.toUTC('foobar');
+                sun.toUTC('foobar');
                 throw 'Allowed an invalid time parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid time');
@@ -625,7 +598,7 @@ describe('sunrise()', () => {
 
         it('Undefined offset parameter', () => {
             try {
-                sunrise.toUTC(5);
+                sun.toUTC(5);
                 throw 'Allowed an undefined offset parameter';
             } catch (err) {
                 expect(err).toEqual('Invalid offset');
@@ -634,7 +607,7 @@ describe('sunrise()', () => {
 
         it('Invalid offset parameter', () => {
             try {
-                sunrise.toUTC(5, 'foobar');
+                sun.toUTC(5, 'foobar');
                 throw 'Allowed an invalid offset parameter data type';
             } catch (err) {
                 expect(err).toEqual('Invalid offset');
@@ -645,7 +618,7 @@ describe('sunrise()', () => {
             let time = 5;
             let offset = -2;
             let utc = time - offset;
-            let response = sunrise.toUTC(time, offset);
+            let response = sun.toUTC(time, offset);
             expect(response).toEqual(utc);
         });
 
@@ -655,25 +628,107 @@ describe('sunrise()', () => {
 
         it('test', () => {
             let year = 2022;
-            let month =10;
+            let month = 10;
             let day = 10;
             let lon = -78;
             let lat = 41;
 
             let original = calculateSunrise( String(year) + String(month) + String(day), lon, lat); 
 
-            let dayOfYear = sunrise.getDayOfYear(year, month, day);
-            let utcOffset = sunrise.getLonUTCOffset(lon);
-            let risingTime = sunrise.getRisingTime(lon, dayOfYear);
-            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(risingTime);
-            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
-            let sunsRightAscension = sunrise.getSunsRightAscension(sunsTrueLon);
-            let sunsLocalHourAngle = sunrise.getSunsLocalHourAngle(sunsTrueLon, lat);
+            let dayOfYear = sun.getDayOfYear(year, month, day);
+            let utcOffset = sun.getLonUTCOffset(lon);
+            let risingTime = sun.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(risingTime);
+            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
+            let sunsRightAscension = sun.getSunsRightAscension(sunsTrueLon);
+            let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
             let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
-            let localMeanTime = sunrise.getLocalMeanTime(hours, risingTime, sunsRightAscension);
-            let time = sunrise.toUTC(localMeanTime, utcOffset);
-
+            let localMeanTime = sun.getLocalMeanTime(hours, risingTime, sunsRightAscension);
+            let time = sun.toUTC(localMeanTime, utcOffset);
+            // console.log(time);
             expect(time).toEqual(original['rise']);
+        });
+
+    });
+
+    describe('sunrise()', () => {
+
+        let year = 2022;
+        let month = 5;
+        let day = 1;
+        let lat = 41;
+        let lon = -78;
+        let invalidDate = 'Invalid date';
+
+        it('Invalid year parameter', () => {
+            try {
+                sun.sunrise('foobar');
+                throw 'Allowed an invalid year parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid month parameter', () => {
+            try {
+                sun.sunrise(year, 'foobar');
+                throw 'Allowed an invalid month parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid day parameter', () => {
+            try {
+                sun.sunrise(year, month, 'foobar');
+                throw 'Allowed an invalid day parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid Date - Not a Leap Year', () => {
+            try {
+                sun.sunrise(year, 2, 29);
+                throw 'Allowed an invalid date. Not a leap year';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid lat', () => {
+            try {
+                sun.sunrise(year, month, day, -300);
+                throw 'Allowed an invalid lat parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lat');
+            }
+        });
+
+        it('Invalid lon', () => {
+            try {
+                sun.sunrise(year, month, day, lat, -300);
+                throw 'Allowed an invalid lon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lon');
+            }
+        });
+
+        it('Calculating Sunrise', () => {
+            let dayOfYear = sun.getDayOfYear(year, month, day);
+            let utcOffset = sun.getLonUTCOffset(lon);
+            let risingTime = sun.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(risingTime);
+            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
+            let sunsRightAscension = sun.getSunsRightAscension(sunsTrueLon);
+            let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
+            let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
+            let localMeanTime = sun.getLocalMeanTime(hours, risingTime, sunsRightAscension);
+            let time = sun.toUTC(localMeanTime, utcOffset);
+
+            let response = sun.sunrise(year, month, day, lat, lon);
+            expect(response).toEqual(time);
+
         });
 
     });
