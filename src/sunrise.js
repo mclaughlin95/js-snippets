@@ -81,6 +81,34 @@ let sunrise = (() => {
     }
 
     /**
+     * Will calculate the local mean time for rising or setting
+     * 
+     * Step 8 of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * @param {Number} hours the hours of the suns local hour 
+     * @param {Number} time the rising or setting time
+     * @param {Number} rightAscension the suns right ascention value in hours
+     * @returns {Number} the local mean time
+     */
+    function getLocalMeanTime(hours, time, rightAscension) {
+        if (typeof hours != 'number') {
+            throw 'Invalid hours';
+        }
+        if (typeof time != 'number') {
+            throw 'Invalid time';
+        }
+        if (typeof rightAscension != 'number') {
+            throw 'Invalid rightAscension';
+        }
+        return hours + rightAscension - (0.06571 * time) - 6.622;
+    }
+
+    /**
      * Will determine the UTC offset from longitude coordinates
      * 
      * Type: Public Function
@@ -173,6 +201,33 @@ let sunrise = (() => {
             throw 'Invalid dayOfYear';
         }
         return dayOfYear + ((18 - utcOffset) / 24);
+    }
+
+    /**
+     * Will determine the suns declination and calculate the suns local hour angle
+     * 
+     * Step 6 to 7A of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} sunsTrueLon The Suns True Longitude
+     * @param {Number} lat The latitude of the location 
+     * @returns {Number} The Suns Local Hour Angle
+     */
+    function getSunsLocalHourAngle(sunsTrueLon, lat) {
+        if (typeof sunsTrueLon != 'number') {
+            throw 'Invalid sunsTrueLon';
+        }
+        if (!this.isValidLat(lat)) {
+            throw 'Invalid lat';
+        }
+        let sinDeclination = 0.39782 * Math.sin((Math.PI / 180.0) * sunsTrueLon);
+        let cosDeclination = Math.cos(Math.asin(sinDeclination));
+        return (Math.cos((Math.PI / 180.0) * sunrise.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
     }
 
     /**
@@ -423,12 +478,45 @@ let sunrise = (() => {
         return false;
     }
 
+    function sunset() {
+        
+    }
+
+    /**
+     * Will apply an offset to a given time
+     * 
+     * Step 9 of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Resource: https://www.edwilliams.org/sunrise_sunset_algorithm.htm
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} time the local time 
+     * @param {Number} offset the local offset time
+     * @throws {String} Will throw an error if time is invalid
+     * @throws {String} Will throw an error if offset is invalid
+     * @returns {Number} The UTC time
+     */
+    function toUTC(time, offset) {
+        if (typeof time != 'number') {
+            throw 'Invalid time';
+        }
+        if (typeof offset != 'number') {
+            throw 'Invalid offset';
+        }
+        return time - offset;
+    }
+
     return {
         getDayOfYear: getDayOfYear,
+        getLocalMeanTime: getLocalMeanTime,
         getLonUTCOffset: getLonUTCOffset,
         getMonthDays: getMonthDays,
         getRisingTime: getRisingTime,
         getSettingTime: getSettingTime,
+        getSunsLocalHourAngle: getSunsLocalHourAngle,
         getSunsMeanAnomaly: getSunsMeanAnomaly,
         getSunsRightAscension: getSunsRightAscension,
         getSunsTrueLon: getSunsTrueLon,
@@ -439,7 +527,9 @@ let sunrise = (() => {
         isValidLat: isValidLat,
         isValidLon: isValidLon,
         isValidMonth: isValidMonth,
-        isValidYear: isValidYear
+        isValidYear: isValidYear,
+        toUTC: toUTC,
+        zenith: zenith
     };
 
 })();
@@ -447,39 +537,36 @@ let sunrise = (() => {
 export default sunrise;
 
 
-
-
-
 // Return is in UTC Time!!!
 // Function Pulled straight from make_global_qtdeg_sunrise_sunset_grids.c and converted to JavaScript
-function calculateSunrise(yyyymmdd, lon, lat) {
+export function calculateSunrise(yyyymmdd, lon, lat) {
     
     var zenith = 90.88;
 
 
     /////////////////////////////////////////////////////////////////////// calculate day of the year
 
-    // // Convert String to numbers
-    // var date = parseInt(yyyymmdd);
-    // var lon = parseFloat(lon);
-    // var lat = parseFloat(lat);
+    // Convert String to numbers
+    var date = parseInt(yyyymmdd);
+    var lon = parseFloat(lon);
+    var lat = parseFloat(lat);
 
-    // // Parse date
-    // var day = date % 100;
-    // var year = date / 10000;
-    // var month = (date / 100) % 100;
-    // var mmdd = (month * 100) + day;
+    // Parse date
+    var day = date % 100;
+    var year = date / 10000;
+    var month = (date / 100) % 100;
+    var mmdd = (month * 100) + day;
 
-    // day = Math.floor(day);
-    // year = Math.floor(year);
-    // month = Math.floor(month);
-    // mmdd = Math.floor(mmdd);
+    day = Math.floor(day);
+    year = Math.floor(year);
+    month = Math.floor(month);
+    mmdd = Math.floor(mmdd);
 
-    // // Calculate the day of the year
-    // var n1 = Math.floor(275.0 * month / 9.0);
-    // var n2 = Math.floor((month + 9.0) / 12.0);
-    // var n3 = (1 + Math.floor((year - 4.0 * Math.floor(year / 4.0) + 2.0) / 3.0));
-    // var n = n1 - (n2 * n3) + day - 30;
+    // Calculate the day of the year
+    var n1 = Math.floor(275.0 * month / 9.0);
+    var n2 = Math.floor((month + 9.0) / 12.0);
+    var n3 = (1 + Math.floor((year - 4.0 * Math.floor(year / 4.0) + 2.0) / 3.0));
+    var n = n1 - (n2 * n3) + day - 30;
 
 
     // console.log('Day Of Year');

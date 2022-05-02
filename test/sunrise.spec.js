@@ -1,4 +1,5 @@
 import sunrise from '../src/sunrise.js';
+import { calculateSunrise } from '../src/sunrise.js';
 
 describe('sunrise()', () => {
 
@@ -451,7 +452,6 @@ describe('sunrise()', () => {
 
     });
 
-    // Step 5 A-C
     describe('getSunsRightAscension()', () => {
 
         it('Undefined sunsTrueLon', () => {
@@ -486,6 +486,194 @@ describe('sunrise()', () => {
             let expected = rightAscension;
             let response = sunrise.getSunsRightAscension(sunsTrueLon);
             expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('getSunsLocalHourAngle()', () => {
+
+        it('Undefined sunsTrueLon parameter', () => {
+            try {
+                sunrise.getSunsLocalHourAngle();
+                throw 'Allowed an undefined sunsTrueLon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsTrueLon');
+            }
+        });
+
+        it('Invalid sunsTrueLon parameter data type', () => {
+            try {
+                sunrise.getSunsLocalHourAngle('foobar');
+                throw 'Allowed an invalid sunsTrueLon parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsTrueLon');
+            }
+        });
+
+        it('Invalid lat parameter', () => {
+            try {
+                sunrise.getSunsLocalHourAngle(5, 'foobar');
+                throw 'Allowed an invalid lat parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lat');
+            }
+        });
+
+        it('Calculating Suns Local Hour', () => {
+            let lat = 41;
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let time = sunrise.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
+            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let sinDeclination = 0.39782 * Math.sin((Math.PI / 180.0) * sunsTrueLon);
+            let cosDeclination = Math.cos(Math.asin(sinDeclination));
+            let cosHour = (Math.cos((Math.PI / 180.0) * sunrise.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
+            let expected = cosHour;
+            let response = sunrise.getSunsLocalHourAngle(sunsTrueLon, lat);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('getLocalMeanTime()', () => {
+
+        it('Undefined hours parameter', () => {
+            try {
+                sunrise.getLocalMeanTime();
+                throw 'Allowed an undefined hours parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid hours');
+            }
+        });
+
+        it('Invalid hours parameter data type', () => {
+            try {
+                sunrise.getLocalMeanTime('foobar');
+                throw 'Allowed an invalid hours parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid hours');
+            }
+        });
+
+        it('Undefined time parameter', () => {
+            try {
+                sunrise.getLocalMeanTime(5);
+                throw 'Allowed an undefined time parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Invalid time parameter data type', () => {
+            try {
+                sunrise.getLocalMeanTime(5, 'foobar');
+                throw 'Allowed an invalid time parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Undefined rightAscenstion parameter', () => {
+            try {
+                sunrise.getLocalMeanTime(5, 5);
+                throw 'Allowed an undefined rightAscension parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid rightAscension');
+            }
+        });
+
+        it('Invalid rightAscension parameter', () => {
+            try {
+                sunrise.getLocalMeanTime(5, 5, 'foobar');
+                throw 'Allowed an invalid rightAscension parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid rightAscension');
+            }
+        });
+
+        it('Calculating Local Mean Time', () => {
+            let hours = 5;
+            let time = 5;
+            let rightAscension = 0.5;
+            let expected = hours + rightAscension - (0.06571 * time) - 6.622;
+            let response = sunrise.getLocalMeanTime(hours, time, rightAscension);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
+    describe('toUTC()', () => {
+
+        it('Undefined time parameter', () => {
+            try {
+                sunrise.toUTC();
+                throw 'Allowed an undefined time parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Invalid time parameter data type', () => {
+            try {
+                sunrise.toUTC('foobar');
+                throw 'Allowed an invalid time parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid time');
+            }
+        });
+
+        it('Undefined offset parameter', () => {
+            try {
+                sunrise.toUTC(5);
+                throw 'Allowed an undefined offset parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid offset');
+            }
+        });
+
+        it('Invalid offset parameter', () => {
+            try {
+                sunrise.toUTC(5, 'foobar');
+                throw 'Allowed an invalid offset parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid offset');
+            }
+        });
+
+        it('Checking UTC conversion', () => {
+            let time = 5;
+            let offset = -2;
+            let utc = time - offset;
+            let response = sunrise.toUTC(time, offset);
+            expect(response).toEqual(utc);
+        });
+
+    });
+
+    describe('Checking Output of Sunrise', () => {
+
+        it('test', () => {
+            let year = 2022;
+            let month =10;
+            let day = 10;
+            let lon = -78;
+            let lat = 41;
+
+            let original = calculateSunrise( String(year) + String(month) + String(day), lon, lat); 
+
+            let dayOfYear = sunrise.getDayOfYear(year, month, day);
+            let utcOffset = sunrise.getLonUTCOffset(lon);
+            let risingTime = sunrise.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(risingTime);
+            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let sunsRightAscension = sunrise.getSunsRightAscension(sunsTrueLon);
+            let sunsLocalHourAngle = sunrise.getSunsLocalHourAngle(sunsTrueLon, lat);
+            let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
+            let localMeanTime = sunrise.getLocalMeanTime(hours, risingTime, sunsRightAscension);
+            let time = sunrise.toUTC(localMeanTime, utcOffset);
+
+            expect(time).toEqual(original['rise']);
         });
 
     });
