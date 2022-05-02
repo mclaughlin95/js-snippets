@@ -198,6 +198,30 @@ let sunrise = (() => {
     }
 
     /**
+     * Will calculate the Suns Right Ascension
+     * 
+     * Step 5A throught 5C of Resource Document
+     * 
+     * Type: Public Function
+     * 
+     * Author: Corey Lee McLaughlin
+     * 
+     * @param {Number} sunsTrueLon The suns true longitude
+     * @throws {String} Will throw an error if sunsTrueLon parameter is invalid 
+     * @returns {Number} The Suns Right Ascension
+     */
+    function getSunsRightAscension(sunsTrueLon) {
+        if (typeof sunsTrueLon != 'number') {
+            throw 'Invalid sunsTrueLon';
+        }
+        let rightAscension = (180.0 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180.0) * sunsTrueLon));
+        let lonQuadrant = (Math.floor(sunsTrueLon / 90.0)) * 90.0;
+        let rightAscensionQuadrant = (Math.floor(rightAscension / 90.0)) * 90.0;
+        rightAscension += (lonQuadrant - rightAscensionQuadrant);
+        return rightAscension /= 15.0;
+    }
+
+    /**
      * Will calculate the Suns True Longitude from Suns Mean Anomaly
      * 
      * Step Four of Resource Document
@@ -406,6 +430,7 @@ let sunrise = (() => {
         getRisingTime: getRisingTime,
         getSettingTime: getSettingTime,
         getSunsMeanAnomaly: getSunsMeanAnomaly,
+        getSunsRightAscension: getSunsRightAscension,
         getSunsTrueLon: getSunsTrueLon,
         isLeapYear: isLeapYear,
         isValidDate: isValidDate,

@@ -451,4 +451,43 @@ describe('sunrise()', () => {
 
     });
 
+    // Step 5 A-C
+    describe('getSunsRightAscension()', () => {
+
+        it('Undefined sunsTrueLon', () => {
+            try {
+                sunrise.getSunsRightAscension();
+                throw 'Allowed an undefined sunsTrueLon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsTrueLon');
+            }
+        });
+
+        it('Invalid sunsTrueLon parameter data type', () => {
+            try {
+                sunrise.getSunsRightAscension('foobar');
+                throw 'Allowed an invalid sunsTrueLon parameter data type';
+            } catch (err) {
+                expect(err).toEqual('Invalid sunsTrueLon');
+            }
+        });
+
+        it('Calculating Suns Right Ascension', () => {
+            let lon = -78;
+            let dayOfYear = sunrise.getDayOfYear(2022, 5, 1);
+            let time = sunrise.getRisingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sunrise.getSunsMeanAnomaly(time);
+            let sunsTrueLon = sunrise.getSunsTrueLon(sunsMeanAnomaly);
+            let rightAscension = (180.0 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180.0) * sunsTrueLon));
+            let lquadrant = (Math.floor(sunsTrueLon / 90.0)) * 90.0;
+            let raquadrant = (Math.floor(rightAscension / 90.0)) * 90.0;
+            rightAscension = rightAscension + (lquadrant - raquadrant);
+            rightAscension /= 15.0;
+            let expected = rightAscension;
+            let response = sunrise.getSunsRightAscension(sunsTrueLon);
+            expect(response).toEqual(expected);
+        });
+
+    });
+
 });
