@@ -624,33 +624,6 @@ describe('sun', () => {
 
     });
 
-    describe('Checking Output of Sunrise', () => {
-
-        it('test', () => {
-            let year = 2022;
-            let month = 10;
-            let day = 10;
-            let lon = -78;
-            let lat = 41;
-
-            let original = calculateSunrise( String(year) + String(month) + String(day), lon, lat); 
-
-            let dayOfYear = sun.getDayOfYear(year, month, day);
-            let utcOffset = sun.getLonUTCOffset(lon);
-            let risingTime = sun.getRisingTime(lon, dayOfYear);
-            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(risingTime);
-            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
-            let sunsRightAscension = sun.getSunsRightAscension(sunsTrueLon);
-            let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
-            let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
-            let localMeanTime = sun.getLocalMeanTime(hours, risingTime, sunsRightAscension);
-            let time = sun.toUTC(localMeanTime, utcOffset);
-            // console.log(time);
-            expect(time).toEqual(original['rise']);
-        });
-
-    });
-
     describe('sunrise()', () => {
 
         let year = 2022;
@@ -725,10 +698,88 @@ describe('sun', () => {
             let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
             let localMeanTime = sun.getLocalMeanTime(hours, risingTime, sunsRightAscension);
             let time = sun.toUTC(localMeanTime, utcOffset);
-
             let response = sun.sunrise(year, month, day, lat, lon);
             expect(response).toEqual(time);
+        });
 
+    });
+
+    describe('sunset()', () => {
+
+        let year = 2022;
+        let month = 5;
+        let day = 1;
+        let lat = 41;
+        let lon = -78;
+        let invalidDate = 'Invalid date';
+
+        it('Invalid year parameter', () => {
+            try {
+                sun.sunset('foobar');
+                throw 'Allowed an invalid year parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid month parameter', () => {
+            try {
+                sun.sunset(year, 'foobar');
+                throw 'Allowed an invalid month parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid day parameter', () => {
+            try {
+                sun.sunset(year, month, 'foobar');
+                throw 'Allowed an invalid day parameter';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid Date - Not a Leap Year', () => {
+            try {
+                sun.sunset(year, 2, 29);
+                throw 'Allowed an invalid date. Not a leap year';
+            } catch (err) {
+                expect(err).toEqual(invalidDate);
+            }
+        });
+
+        it('Invalid lat', () => {
+            try {
+                sun.sunset(year, month, day, -300);
+                throw 'Allowed an invalid lat parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lat');
+            }
+        });
+
+        it('Invalid lon', () => {
+            try {
+                sun.sunset(year, month, day, lat, -300);
+                throw 'Allowed an invalid lon parameter';
+            } catch (err) {
+                expect(err).toEqual('Invalid lon');
+            }
+        });
+
+        it('Calculating Sunset', () => {
+            let dayOfYear = sun.getDayOfYear(year, month, day);
+            let utcOffset = sun.getLonUTCOffset(lon);
+            let settingTime = sun.getSettingTime(lon, dayOfYear);
+            let sunsMeanAnomaly = sun.getSunsMeanAnomaly(settingTime);
+            let sunsTrueLon = sun.getSunsTrueLon(sunsMeanAnomaly);
+            let sunsRightAscension = sun.getSunsRightAscension(sunsTrueLon);
+            let sunsLocalHourAngle = sun.getSunsLocalHourAngle(sunsTrueLon, lat);
+            let hours = ((180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
+            let localMeanTime = sun.getLocalMeanTime(hours, settingTime, sunsRightAscension);
+            let time = sun.toUTC(localMeanTime, utcOffset);
+            let response = sun.sunset(year, month, day, lat, lon);
+            expect(response).toEqual(time);
         });
 
     });

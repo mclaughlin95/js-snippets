@@ -225,9 +225,9 @@ let sun = (() => {
         if (!this.isValidLat(lat)) {
             throw 'Invalid lat';
         }
-        let sinDeclination = 0.39782 * Math.sin((Math.PI / 180.0) * sunsTrueLon);
+        let sinDeclination = 0.39782 * Math.sin((Math.PI / 180) * sunsTrueLon);
         let cosDeclination = Math.cos(Math.asin(sinDeclination));
-        return (Math.cos((Math.PI / 180.0) * this.zenith) - (sinDeclination * Math.sin((Math.PI / 180.0) * lat))) / (cosDeclination * Math.cos((Math.PI / 180.0) * lat));
+        return (Math.cos((Math.PI / 180) * this.zenith) - (sinDeclination * Math.sin((Math.PI / 180) * lat))) / (cosDeclination * Math.cos((Math.PI / 180) * lat));
     }
 
     /**
@@ -269,11 +269,11 @@ let sun = (() => {
         if (typeof sunsTrueLon != 'number') {
             throw 'Invalid sunsTrueLon';
         }
-        let rightAscension = (180.0 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180.0) * sunsTrueLon));
-        let lonQuadrant = (Math.floor(sunsTrueLon / 90.0)) * 90.0;
-        let rightAscensionQuadrant = (Math.floor(rightAscension / 90.0)) * 90.0;
+        let rightAscension = (180 / Math.PI) * Math.atan(0.91764 * Math.tan((Math.PI / 180) * sunsTrueLon));
+        let lonQuadrant = (Math.floor(sunsTrueLon / 90)) * 90;
+        let rightAscensionQuadrant = (Math.floor(rightAscension / 90)) * 90;
         rightAscension += (lonQuadrant - rightAscensionQuadrant);
-        return rightAscension /= 15.0;
+        return rightAscension /= 15;
     }
 
     /**
@@ -295,11 +295,11 @@ let sun = (() => {
         if (typeof sunsMeanAnomaly != 'number') {
             throw 'Invalid sunsMeanAnomaly';
         }
-        let lon = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180.0) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180.0) * sunsMeanAnomaly)) + 282.634;
-        if (lon < 0.0) {
-            lon += 360.0;
-        } else if (lon >= 360.0) {
-            lon -= 360.0;
+        let lon = sunsMeanAnomaly + (1.916 * Math.sin((Math.PI / 180) * sunsMeanAnomaly)) + (0.020 * Math.sin(2.0 * (Math.PI / 180) * sunsMeanAnomaly)) + 282.634;
+        if (lon < 0) {
+            lon += 360;
+        } else if (lon >= 360) {
+            lon -= 360;
         }
         return lon;
     }
@@ -498,6 +498,19 @@ let sun = (() => {
         return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
     }
 
+    function sunset(year, month, day, lat, lon) {
+        if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
+        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
+        let settingTime = this.getSettingTime(lon, this.getDayOfYear(year, month, day));
+        let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(settingTime));
+        let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
+        let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
+        let hours = ((180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
+        let localMeanTime = this.getLocalMeanTime(hours, settingTime, sunsRightAscension);
+        return this.toUTC(localMeanTime, this.getLonUTCOffset(lon));
+    }
+
     /**
      * Will apply an offset to a given time
      * 
@@ -516,13 +529,12 @@ let sun = (() => {
      * @returns {Number} The UTC time
      */
     function toUTC(time, offset) {
-        if (typeof time != 'number') {
-            throw 'Invalid time';
-        }
-        if (typeof offset != 'number') {
-            throw 'Invalid offset';
-        }
-        return time - offset;
+        if (typeof time != 'number') { throw 'Invalid time'; }
+        if (typeof offset != 'number') { throw 'Invalid offset'; }
+        let utc = time - offset;
+        while (utc < 0) { utc += 24;}
+        while (utc >= 24) { utc -= 24; }
+        return utc;
     }
 
     return {
@@ -545,6 +557,7 @@ let sun = (() => {
         isValidMonth: isValidMonth,
         isValidYear: isValidYear,
         sunrise: sunrise,
+        sunset: sunset,
         toUTC: toUTC,
         zenith: zenith
     };
