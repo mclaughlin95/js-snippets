@@ -1,7 +1,7 @@
 'use strict'
 
 /**
- * A node module used to calculate sunrise and sunset for a given time and location
+ * A module used to calculate sunrise and sunset for a given time and location
  * 
  * Type: Module
  * 
