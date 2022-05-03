@@ -1,5 +1,5 @@
+'use strict'
 import sun from '../src/sun.js';
-import { calculateSunrise } from '../src/sun.js';
 
 describe('sun', () => {
 
@@ -345,7 +345,6 @@ describe('sun', () => {
 
     });
 
-
     describe('getRisingTime()', () => {
 
         it('Invalid lon parameter', () => {
@@ -628,7 +627,6 @@ describe('sun', () => {
     });
 
     describe('sunrise()', () => {
-
         let year = 2022;
         let month = 5;
         let day = 1;
@@ -708,7 +706,6 @@ describe('sun', () => {
     });
 
     describe('sunset()', () => {
-
         let year = 2022;
         let month = 5;
         let day = 1;
