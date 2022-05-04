@@ -16,7 +16,7 @@ let gibberish = (() => {
 	 * Isolated as a private variable to prevent variable reinstantion when
 	 * getRandomCharacter() is called
 	 * 
-	 * Type: Private Function
+	 * Type: Private Variable
 	 * 
 	 * Author: Corey Lee McLaughlin
 	 * 
