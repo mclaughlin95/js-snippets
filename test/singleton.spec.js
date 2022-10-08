@@ -1,4 +1,4 @@
-import Singleton from '../src/singleton.js';
+const Singleton = require('../src/singleton.js');
 
 describe('Singleton', () => {
     

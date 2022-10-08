@@ -8,7 +8,7 @@
     "autodoc-sun": "npx documentation build { src/sun.js } -f html -o docs/sun",
     "test": "jasmine --config=./jasmine.json"
   },
-  "type": "module",
+  "type": "commonjs",
   "dependencies": {
     "documentation": "^14.0.0"
   }

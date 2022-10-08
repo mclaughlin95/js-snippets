@@ -1,4 +1,4 @@
-import gibberish from '../src/gibberish.js';
+const gibberish = require('../src/gibberish.js');
 
 describe('gibberish', () =>{
 

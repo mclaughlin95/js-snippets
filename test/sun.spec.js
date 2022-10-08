@@ -1,5 +1,5 @@
 'use strict'
-import sun from '../src/sun.js';
+const sun = require('../src/sun.js');
 
 describe('sun', () => {
 

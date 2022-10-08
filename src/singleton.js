@@ -10,13 +10,8 @@
  * - An id property is generated to identify its uniqueness 
  * 
  * Author: Corey Lee McLaughlin
- * 
- * Example:
- * let a = Singleton.getInstance()
- * let b = Singleton.getInstance()
- * a.id == b.id
  */
-export default class Singleton {
+class Singleton {
     
     /**
      * The constructor will generated a random number to identify as a unique
@@ -43,3 +38,5 @@ export default class Singleton {
     }
 
 }
+
+module.exports = Singleton;

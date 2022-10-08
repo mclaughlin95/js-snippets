@@ -72,4 +72,4 @@ let gibberish = (() => {
 
 })();
 
-export default gibberish;
+module.exports = gibberish;

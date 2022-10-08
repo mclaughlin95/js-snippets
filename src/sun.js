@@ -569,4 +569,4 @@ let sun = (() => {
 
 })();
 
-export default sun;
+module.exports = sun;
