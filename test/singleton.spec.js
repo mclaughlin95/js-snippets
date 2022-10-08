@@ -3,11 +3,10 @@ import Singleton from '../src/singleton.js';
 describe('Singleton', () => {
     
     it('getInstance()', () => {
-        let a = Singleton.getInstance('foo');
+        let a = Singleton.getInstance();
         expect(a.constructor.name).toEqual('Singleton');
-        expect(a.name).toEqual('foo');
-        let b = Singleton.getInstance('bar');
-        expect(b.name).toEqual('foo');
+        let b = Singleton.getInstance();
+        expect(a.id).toEqual(b.id);
     });
 
 });
