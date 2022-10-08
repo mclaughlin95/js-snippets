@@ -6,7 +6,7 @@
     "autodoc-gibberish": "npx documentation build { src/gibberish.js } -f html -o docs/gibberish",
     "autodoc-singleton": "npx documentation build { src/singleton.js } -f html -o docs/singleton",
     "autodoc-sun": "npx documentation build { src/sun.js } -f html -o docs/sun",
-    "test": "jasmine"
+    "test": "jasmine --config=./jasmine.json"
   },
   "type": "module",
   "dependencies": {
