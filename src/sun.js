@@ -67,7 +67,7 @@ let sun = (() => {
          * @returns {Number} the day of the year
          */
         function getDayOfYear(year, month, day) {
-            if (!this.isValidDate(year, month, day)) { throw 'Invalid date'; }
+            if (!isValidDate(year, month, day)) { throw 'Invalid date'; }
             let n1 = Math.floor(275 * month / 9);
             let n2 = Math.floor((month + 9) / 12);
             let n3 = (1 + Math.floor((year - 4 * Math.floor(year / 4) + 2) / 3))
@@ -90,9 +90,9 @@ let sun = (() => {
          * @returns {Number} the number of days in the given month
          */
         function getMonthDays(month, year) {
-            if (!this.isValidMonth(month)) { throw 'Invalid month'; }
-            if (!this.isValidYear(year)) { throw 'Invalid year'; }
-            if (this.isLeapYear(year) && month == 2) { return monthDays[2] + 1; }
+            if (!isValidMonth(month)) { throw 'Invalid month'; }
+            if (!isValidYear(year)) { throw 'Invalid year'; }
+            if (isLeapYear(year) && month == 2) { return monthDays[2] + 1; }
             return monthDays[month];
         }
 
@@ -110,7 +110,7 @@ let sun = (() => {
          * @returns {Boolean}
          */
         function isLeapYear(year) {
-            if (!this.isValidYear(year)) { throw 'Invalid year'; }
+            if (!isValidYear(year)) { throw 'Invalid year'; }
             return (year % 100 === 0) ? (year % 400 === 0) : (year % 4 === 0);
         }
 
@@ -127,8 +127,8 @@ let sun = (() => {
          * @returns {Boolean}
          */
         function isValidDate(year, month, day) {
-            if (!this.isValidYear(year) || !this.isValidMonth(month) || !this.isValidDay(day)) { return false; }
-            if (day > this.getMonthDays(month, year)) { return false; }
+            if (!isValidYear(year) || !isValidMonth(month) || !isValidDay(day)) { return false; }
+            if (day > getMonthDays(month, year)) { return false; }
             return true;
         }   
 
@@ -307,7 +307,7 @@ let sun = (() => {
      * @returns {Number} the hour value of the longitude coordinate
      */
      function getLonUTCOffset(lon) {
-        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
+        if (!isValidLon(lon)) { throw 'Invalid lon'; }
         return lon / 15;
     }
 
@@ -327,8 +327,8 @@ let sun = (() => {
      * @returns {Number} the local rising time
      */
     function getRisingTime(lon, dayOfYear) {
-        let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
+        let utcOffset = getLonUTCOffset(lon);
+        if (!timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((6 - utcOffset) / 24);
     }
 
@@ -348,8 +348,8 @@ let sun = (() => {
      * @returns {Number} the local setting time
      */
     function getSettingTime(lon, dayOfYear) {
-        let utcOffset = this.getLonUTCOffset(lon);
-        if (!this.timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
+        let utcOffset = getLonUTCOffset(lon);
+        if (!timeLib.isValidDayOfYear(dayOfYear)) { throw 'Invalid dayOfYear'; }
         return dayOfYear + ((18 - utcOffset) / 24);
     }
 
@@ -372,10 +372,10 @@ let sun = (() => {
      */
     function getSunsLocalHourAngle(sunsTrueLon, lat) {
         if (typeof sunsTrueLon != 'number') { throw 'Invalid sunsTrueLon'; }
-        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
+        if (!isValidLat(lat)) { throw 'Invalid lat'; }
         let sinDeclination = 0.39782 * Math.sin((Math.PI / 180) * sunsTrueLon);
         let cosDeclination = Math.cos(Math.asin(sinDeclination));
-        return (Math.cos((Math.PI / 180) * this.zenith) - (sinDeclination * Math.sin((Math.PI / 180) * lat))) / (cosDeclination * Math.cos((Math.PI / 180) * lat));
+        return (Math.cos((Math.PI / 180) * zenith) - (sinDeclination * Math.sin((Math.PI / 180) * lat))) / (cosDeclination * Math.cos((Math.PI / 180) * lat));
     }
 
     /**
@@ -506,16 +506,16 @@ let sun = (() => {
      * @returns {Number} the utc time of sunrise for the location
      */
     function sunrise(year, month, day, lat, lon) {
-        if (!this.timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
-        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
-        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
-        let risingTime = this.getRisingTime(lon, this.timeLib.getDayOfYear(year, month, day));
-        let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(risingTime));
-        let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
-        let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
+        if (!timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!isValidLat(lat)) { throw 'Invalid lat'; }
+        if (!isValidLon(lon)) { throw 'Invalid lon'; }
+        let risingTime = getRisingTime(lon, timeLib.getDayOfYear(year, month, day));
+        let sunsTrueLon = getSunsTrueLon(getSunsMeanAnomaly(risingTime));
+        let sunsRightAscension = getSunsRightAscension(sunsTrueLon);
+        let sunsLocalHourAngle = getSunsLocalHourAngle(sunsTrueLon, lat);
         let hours = (360.0 - (180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
-        let localMeanTime = this.getLocalMeanTime(hours, risingTime, sunsRightAscension);
-        return this.timeLib.toUTC(localMeanTime, this.getLonUTCOffset(lon));
+        let localMeanTime = getLocalMeanTime(hours, risingTime, sunsRightAscension);
+        return timeLib.toUTC(localMeanTime, getLonUTCOffset(lon));
     }
 
     /**
@@ -538,16 +538,16 @@ let sun = (() => {
      * @returns {Number} the utc time of sunset for the location
      */
     function sunset(year, month, day, lat, lon) {
-        if (!this.timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
-        if (!this.isValidLat(lat)) { throw 'Invalid lat'; }
-        if (!this.isValidLon(lon)) { throw 'Invalid lon'; }
-        let settingTime = this.getSettingTime(lon, this.timeLib.getDayOfYear(year, month, day));
-        let sunsTrueLon = this.getSunsTrueLon(this.getSunsMeanAnomaly(settingTime));
-        let sunsRightAscension = this.getSunsRightAscension(sunsTrueLon);
-        let sunsLocalHourAngle = this.getSunsLocalHourAngle(sunsTrueLon, lat);
+        if (!timeLib.isValidDate(year, month, day)) { throw 'Invalid date'; }
+        if (!isValidLat(lat)) { throw 'Invalid lat'; }
+        if (!isValidLon(lon)) { throw 'Invalid lon'; }
+        let settingTime = getSettingTime(lon, timeLib.getDayOfYear(year, month, day));
+        let sunsTrueLon = getSunsTrueLon(getSunsMeanAnomaly(settingTime));
+        let sunsRightAscension = getSunsRightAscension(sunsTrueLon);
+        let sunsLocalHourAngle = getSunsLocalHourAngle(sunsTrueLon, lat);
         let hours = ((180.0 / Math.PI) * Math.acos(sunsLocalHourAngle)) / 15;
-        let localMeanTime = this.getLocalMeanTime(hours, settingTime, sunsRightAscension);
-        return this.timeLib.toUTC(localMeanTime, this.getLonUTCOffset(lon));
+        let localMeanTime = getLocalMeanTime(hours, settingTime, sunsRightAscension);
+        return timeLib.toUTC(localMeanTime, getLonUTCOffset(lon));
     }
 
     return {
