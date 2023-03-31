@@ -21,7 +21,7 @@ let gibberish = (() => {
 	 * Author: Corey Lee McLaughlin
 	 * 
 	 */
-	let characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXTZabcdefghiklmnopqrstuvwxyz';
+	let characters = '0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
 
 	/**
 	 * Will generate a random character
